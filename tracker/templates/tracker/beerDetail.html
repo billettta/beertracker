@@ -1,0 +1,26 @@
+
+{% block title %}{{ beer.name }}{% endblock %}
+
+{% block content %}
+<h1>{{ beer.name }}</h1>
+<h4>{{ beer.brewery.name }}</h4>
+{{ beer.style.name}}
+<br/>
+{{ beer.details }}
+<br/>
+<br/>
+ABV: {{ beer.abv }} %
+<table>
+<tr>
+  <th>Reviewer</th>
+  <th>Rating</th>
+  <th>Details</th>
+</tr>
+{% for rating in rating_list %}
+<tr>
+  <td>{{ rating.taster.nickName }}</td>
+  <td>{{ rating.overallRating }}</td>
+  <td>{{ rating.notes }}</td>
+</tr>
+{% endfor %}
+{% endblock %}
