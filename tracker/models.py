@@ -8,13 +8,14 @@ class Brewery(models.Model):
     city = models.CharField(max_length=200)
     country = models.CharField(max_length=200)
     description = models.TextField(blank=True)
+    website = models.URLField()
     def __unicode__(self):
         return self.name
 #    flagship = models.ForeignKey(Beer)
 
 class Style(models.Model):
     name = models.CharField(max_length=200)
-    description = models.TextField()
+    description = models.TextField(blank=True)
     lowabv = models.DecimalField(max_digits=3,decimal_places=1)
     highabv = models.DecimalField(max_digits=3,decimal_places=1)
     def __unicode__(self):
@@ -26,9 +27,11 @@ class Beer(models.Model):
     description = models.TextField(blank=True)
     style = models.ForeignKey(Style)
     abv = models.DecimalField(max_digits=3,decimal_places=1)
+    #uploads to MEDIA_ROOT/beershots need to serve from apache or S3(eventually)
+    #need to figure out how to rename to name of beer and put in folder for brewery
+    picture = models.ImageField(upload_to='beershots')
     def __unicode__(self):
         return self.name
-    #picture 
 
 class Taster(models.Model):
     first = models.CharField(max_length=200)

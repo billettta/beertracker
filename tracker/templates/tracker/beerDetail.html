@@ -1,6 +1,7 @@
-
+{% extends "foundation/base.html" %}
+{% load staticfiles %}
 {% block title %}{{ beer.name }}{% endblock %}
-
+{% block base_body %}
 {% block content %}
 <h1>{{ beer.name }}</h1>
 <h4>{{ beer.brewery.name }}</h4>
@@ -10,6 +11,9 @@
 <br/>
 <br/>
 ABV: {{ beer.abv }} %
+{% with "media/"|add:beer.picture as picture %}
+<img src="{% static picture %}"/>
+{% endwith %}
 <table>
 <tr>
   <th>Reviewer</th>
@@ -23,4 +27,5 @@ ABV: {{ beer.abv }} %
   <td>{{ rating.notes }}</td>
 </tr>
 {% endfor %}
-{% endblock %}
+{% endblock content %}
+{% endblock base_body %}
