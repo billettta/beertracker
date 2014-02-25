@@ -4,8 +4,8 @@ from django.contrib.auth.models import User
 # Create your models here.
 class Brewery(models.Model):
     name = models.CharField(max_length=200)
-    state = models.CharField(max_length=200)
     city = models.CharField(max_length=200)
+    state = models.CharField(max_length=200)
     country = models.CharField(max_length=200)
     description = models.TextField(blank=True)
     website = models.URLField()
@@ -16,8 +16,8 @@ class Brewery(models.Model):
 class Style(models.Model):
     name = models.CharField(max_length=200)
     description = models.TextField(blank=True)
-    lowabv = models.DecimalField(max_digits=3,decimal_places=1)
-    highabv = models.DecimalField(max_digits=3,decimal_places=1)
+    lowabv = models.DecimalField(max_digits=3,decimal_places=1,null=True)
+    highabv = models.DecimalField(max_digits=3,decimal_places=1,null=True)
     def __unicode__(self):
         return self.name
 
@@ -26,10 +26,11 @@ class Beer(models.Model):
     name = models.CharField(max_length=200)
     description = models.TextField(blank=True)
     style = models.ForeignKey(Style)
-    abv = models.DecimalField(max_digits=3,decimal_places=1)
+    abv = models.DecimalField(max_digits=3,decimal_places=1,null=True)
     #uploads to MEDIA_ROOT/beershots need to serve from apache or S3(eventually)
     #need to figure out how to rename to name of beer and put in folder for brewery
     picture = models.ImageField(upload_to='beershots')
+    retired = models.BooleanField(default=False)
     def __unicode__(self):
         return self.name
 
