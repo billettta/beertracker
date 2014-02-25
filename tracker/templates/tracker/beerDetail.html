@@ -2,9 +2,45 @@
 {% load staticfiles %}
 {% block title %}{{ beer.name }}{% endblock %}
 {% block base_body %}
+<nav class="top-bar" data-topbar>
+  <ul class="title-area">
+    <li class="name">
+      <h1><a href="#">BeerQuest</a></h1>
+    </li>
+    <li class="toggle-topbar menu-icon"><a href="#">Menu</a></li>
+  </ul>
+
+  <section class="top-bar-section">
+    <!-- Right Nav Section -->
+    <ul class="right">
+      <li class="active"><a href="#">Rate This Beer</a></li>
+      <li class="has-form">
+        <div class="row collapse">
+          <div class="large-8 small-9 columns">
+            <input type="text" placeholder="Find Stuff">
+          </div>
+          <div class="large-4 small-3 columns">
+            <a href="#" class="alert button expand">Search</a>
+          </div>
+        </div>
+     </li>
+      <li class="has-dropdown">
+        <a href="#">More options</a>
+        <ul class="dropdown">
+          <li><a href="#">Breweries</a></li>
+        </ul>
+      </li>
+    </ul>
+
+    <!-- Left Nav Section -->
+    <ul class="left">
+      <li><a href="#">Home</a></li>
+    </ul>
+  </section>
+</nav>
 {% block content %}
-<h1>{{ beer.name }}</h1>
-<h4>{{ beer.brewery.name }}</h4>
+<h2>{{ beer.name }}</h2>
+<h3><small>{{ beer.brewery.name }}</small></h4>
 {{ beer.style.name}}
 <br/>
 {{ beer.details }}
@@ -15,17 +51,22 @@ ABV: {{ beer.abv }} %
 <img src="{% static picture %}"/>
 {% endwith %}
 <table>
+<thead>
 <tr>
   <th>Reviewer</th>
   <th>Rating</th>
   <th>Details</th>
 </tr>
+</thead>
+<tbody>
 {% for rating in rating_list %}
 <tr>
   <td>{{ rating.taster.nickName }}</td>
   <td>{{ rating.overallRating }}</td>
-  <td>{{ rating.notes }}</td>
+  <td>{{ rating.notes|truncatewords:"20" }}</td>
 </tr>
 {% endfor %}
+</tbody>
+</table>
 {% endblock content %}
 {% endblock base_body %}
