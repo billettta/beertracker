@@ -1,4 +1,4 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, render_to_response
 from django.http import HttpResponse
 from tracker.models import Beer,Rating
 
@@ -35,3 +35,6 @@ def breweryList(request):
 
 def ratingList(request):
     return HttpResponse("You're looking at beer %s.")
+
+def advocate(request):
+    return render_to_response('tracker/advocate.html')
