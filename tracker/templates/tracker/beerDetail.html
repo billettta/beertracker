@@ -1,47 +1,10 @@
-{% extends "foundation/base.html" %}
-{% load staticfiles %}
+{% extends "tracker/base.html" %}
+{% load static %}
 {% block title %}{{ beer.name }}{% endblock %}
 {% block base_body %}
-<nav class="top-bar" data-topbar>
-  <ul class="title-area">
-    <li class="name">
-      <h1><a href="#">BeerQuest</a></h1>
-    </li>
-    <li class="toggle-topbar menu-icon"><a href="#">Menu</a></li>
-  </ul>
-
-  <section class="top-bar-section">
-    <!-- Right Nav Section -->
-    <ul class="right">
-      <li class="active"><a href="#">Rate This Beer</a></li>
-      <li class="has-form">
-        <div class="row collapse">
-          <div class="large-8 small-9 columns">
-            <input type="text" placeholder="Find Stuff">
-          </div>
-          <div class="large-4 small-3 columns">
-            <a href="#" class="alert button expand">Search</a>
-          </div>
-        </div>
-     </li>
-      <li class="has-dropdown">
-        <a href="#">More options</a>
-        <ul class="dropdown">
-          <li><a href="#">Breweries</a></li>
-        </ul>
-      </li>
-    </ul>
-
-    <!-- Left Nav Section -->
-    <ul class="left">
-      <li><a href="#">Home</a></li>
-    </ul>
-  </section>
-</nav>
 {% block content %}
-<h2>{{ beer.name }}</h2>
-<h3><small>{{ beer.brewery.name }}</small></h4>
-{{ beer.style.name}}
+<h3>{{ beer.name }}<small> - {{ beer.brewery.name }}</small></h3>
+<h6><small>Style:</small>{{ beer.style.name}}</h6>
 <br/>
 {{ beer.details }}
 <br/>
