@@ -66,6 +66,38 @@ function styleJSON()
 	});
 }
 
+function buildBeerSQL()
+{
+	var beersList = $('#beers').find('div');
+	$(beersList).each(function() {
+		var link = $(this).text();
+		var beerID = $(this).attr('id');
+		traverseBeerDescription(link, beerID, function(result) {
+		});	
+	});
+}
+
+function traverseBeerDescription (url, beerID, callback)
+{
+	loadPage(url, function (beerList) {
+		var beerTable = $(beerList).find('#baContent table:first').find('table:first').find('tr:last');
+		var noBreaksHtml = $(beerTable).html().replace(/(\r\n|\n|\r)/gm,"").replace(/</g,'&lt;').replace(/>/g,'&gt;');
+		var descriptionTextArray = /Description:&lt;\/strong&gt;\s*&lt;br&gt;(.*)&lt;br&gt;\s*&lt;br&gt;\(Beer added by/gi.exec(noBreaksHtml);
+		var descriptionText = descriptionTextArray[1].trim();
+		if(!descriptionText.match(/.*No notes at this time.*/gi))
+		{
+			var sqlCommand = 'update tracker_beer set description = \'' + descriptionText.replace(/'/g,"''") + '\' where id = ' + beerID + ';';
+			$('#beerSQL').append(sqlCommand + '<br/>');
+		}
+		else
+		{	
+			$('#beerJSON').append(beerID + ', ');
+		}
+		callback('');
+	});
+}
+
+
 function beerJSON()
 {
 	var archiveLink = '?view=beers&show=arc';
