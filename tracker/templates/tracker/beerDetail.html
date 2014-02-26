@@ -16,8 +16,8 @@
         <div class="large-2 columns">
           ABV: {{ beer.abv }} %
         </div>
-        <div class="large-2 columns end">
-          <small>Style:</small>{{ beer.style.name}}</h6>
+        <div class="large-3 columns end">
+          <small>Style:</small><a href="#">{{ beer.style.name}}</a></h6>
         </div>
       </div>
     </div>
@@ -27,9 +27,19 @@
 {{ beer.details }}
 <br/>
 <br/>
-{% with "media/"|add:beer.picture as picture %}
-<img src="{% static picture %}"/>
-{% endwith %}
+<div class="row">
+  <div class="large-12 columns">
+<dl class="accordion" data-accordion>
+  <dd>
+    <a href="#panel1b">Rate this Beer!</a>
+    <div id="panel1b" class="content">
+      FORM SHIT GOES HERE
+    </div>
+  </dd>
+</dl>
+</div>
+</div>
+<br/><br/>
 <div class="row">
 <table>
 <thead>
