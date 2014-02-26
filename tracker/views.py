@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404, render_to_response
 from django.http import HttpResponse
-from tracker.models import Beer,Rating
+from tracker.models import Beer,Rating,RatingForm
 
 def index(request):
     return HttpResponse("hello world")
@@ -9,7 +9,8 @@ def beerDetail(request, beer_id):
     beer = get_object_or_404(Beer, pk=beer_id)
     #should limit for 10 or so with pagination
     ratings = Rating.objects.filter(beer=beer_id)
-    return render(request, 'tracker/beerDetail.html',{'beer':beer,'rating_list':ratings})
+    form = RatingForm()
+    return render(request, 'tracker/beerDetail.html',{'beer':beer,'rating_list':ratings,'form':form})
 
 def breweryDetail(request, brewery_id):
     brewery = get_object_or_404(Brewery, pk=brewery_id)

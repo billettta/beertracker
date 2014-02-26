@@ -26,7 +26,7 @@
     {# Custom head JS #}
     {% block head_js %}{% endblock head_js %}
 </head>
-<body {% block body_attr %}{% endblock body_attr %}>
+<body {% block body_attr %}{% endblock body_attr %} bgcolor="#0000FF">
 <div class="fixed">
 <nav class="top-bar" data-topbar>
   <ul class="title-area">
@@ -39,7 +39,7 @@
   <section class="top-bar-section">
     <!-- Right Nav Section -->
     <ul class="right">
-      <li class="active"><a href="#">{% block active_bar_text %}test{% endblock active_bar_text %}</a></li>
+      <li class="active"><a href="{% block active_bar_link %}#{% endblock %}">{% block active_bar_text %}test{% endblock active_bar_text %}</a></li>
       <li class="has-form">
         <div class="row collapse">
           <div class="large-8 small-9 columns">
@@ -60,7 +60,9 @@
 
     <!-- Left Nav Section -->
     <ul class="left">
-      <li><a href="#">Home</a></li>
+      <li><a href="#">My Ratings</a></li>
+      <li><a href="#">Beers</a></li>
+      <li><a href="#">Breweries</a></li>
     </ul>
   </section>
 </nav>
