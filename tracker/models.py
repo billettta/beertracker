@@ -1,4 +1,5 @@
 from django.db import models
+from django.forms import ModelForm
 from django.contrib.auth.models import User
 
 # Create your models here.
@@ -64,5 +65,10 @@ class Quote(models.Model):
     quoteText = models.TextField()
     #should be taken from logged in user
 #    submiter = models.ForeignKey(Taster)
+
+class RatingForm(ModelForm):
+    class Meta:
+        model = Rating 
+        fields = ['date', 'overallRating','volumeRating','notes','taster']
 
 #additional objects: team ?

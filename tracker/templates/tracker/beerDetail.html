@@ -2,6 +2,7 @@
 {% load static %}
 {% block title %}{{ beer.name }}{% endblock %}
 {% block active_bar_text %}Rate this Beer!{% endblock %}
+{% block active_bar_link %}#panel1b{% endblock %}
 {% block base_body %}
 {% block content %}
 <br/>
@@ -17,7 +18,7 @@
           ABV: {{ beer.abv }} %
         </div>
         <div class="large-3 columns end">
-          <small>Style:</small><a href="#">{{ beer.style.name}}</a></h6>
+          <small>Style:</small><a href="/tracker/style/{{ beer.style.id }}">{{ beer.style.name}}</a></h6>
         </div>
       </div>
     </div>
@@ -31,15 +32,18 @@
   <div class="large-12 columns">
 <dl class="accordion" data-accordion>
   <dd>
-    <a href="#panel1b">Rate this Beer!</a>
-    <div id="panel1b" class="content">
-      FORM SHIT GOES HERE
+    <a href="#panel1a">Rate this Beer!</a>
+    <div id="panel1a" class="content">
+      <form action="tracker/beer/{{ beer.id }}" method="post"
+     {% if form.is_multipart %}enctype="multipart/form-data"{% endif %}>{% csrf_token %}
+        {{ form.as_p }}
+        <input type="submit" class="small button" value="Submit" />
+      </form>
     </div>
   </dd>
-</dl>
-</div>
-</div>
-<br/><br/>
+  <dd>
+    <a href="#panel1b">View Ratings</a>
+    <div id="panel1b" class="content">
 <div class="row">
 <table>
 <thead>
@@ -54,11 +58,17 @@
 <tr>
   <td>{{ rating.taster.nickName }}</td>
   <td>{{ rating.overallRating }}</td>
-  <td>{{ rating.notes|truncatewords:"20" }}</td>
+  <td>{{ rating.notes}}</td>
 </tr>
 {% endfor %}
 </tbody>
 </table>
 </div>
+    </div>
+  </dd>
+</dl>
+</div>
+</div>
+<br/><br/>
 {% endblock content %}
 {% endblock base_body %}
