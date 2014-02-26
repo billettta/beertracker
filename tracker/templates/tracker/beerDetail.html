@@ -14,12 +14,26 @@
         <div class="large-2 columns">
           <img src="http://placehold.it/200x300&Text=Image">
         </div>
-        <div class="large-2 columns">
-          ABV: {{ beer.abv }} %
-        </div>
-        <div class="large-3 columns end">
-          <small>Style:</small><a href="/tracker/style/{{ beer.style.id }}">{{ beer.style.name}}</a></h6>
-        </div>
+	<div class="large-10 columns end">
+		<div class="row">
+			<div class="large-2 columns">
+			  ABV: {{ beer.abv }} %
+			</div>
+			<div class="large-8 columns end">
+			  Style: <a href="/tracker/style/{{ beer.style.id }}">{{ beer.style.name}}</a>
+			</div>
+		</div>
+		<div class="row">
+			<div class="large-10 columns end">
+				<br/><h3><small>Description:</small></h3>
+			</div>
+		</div>
+		<div class="row">
+			<div class="large-10 columns end">
+				{{ beer.description | safe}}
+			</div>	
+		</div>
+	</div>
       </div>
     </div>
   </div>  
@@ -45,12 +59,12 @@
     <a href="#panel1b">View Ratings</a>
     <div id="panel1b" class="content">
 <div class="row">
-<table>
+<table style="width:100%">
 <thead>
 <tr>
-  <th>Reviewer</th>
-  <th>Rating</th>
-  <th>Details</th>
+  <th style="width:25%">Reviewer</th>
+  <th style="width:10%">Rating</th>
+  <th style="width:65%">Details</th>
 </tr>
 </thead>
 <tbody>
