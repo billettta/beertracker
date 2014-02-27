@@ -48,11 +48,15 @@
   <dd>
     <a href="#panel1a">Rate this Beer!</a>
     <div id="panel1a" class="content">
-      <form action="tracker/beer/{{ beer.id }}" method="post"
-     {% if form.is_multipart %}enctype="multipart/form-data"{% endif %}>{% csrf_token %}
-        {{ form.as_p }}
-        <input type="submit" class="small button" value="Submit" />
-      </form>
+        {% if user.is_authenticated %}
+          <form action="tracker/beer/{{ beer.id }}" method="post"
+         {% if form.is_multipart %}enctype="multipart/form-data"{% endif %}>{% csrf_token %}
+            {{ form.as_p }}
+            <input type="submit" class="small button" value="Submit" />
+          </form>
+        {% else %}
+            <a href="{% url 'django.contrib.auth.views.login' %}?next={% firstof request.path '/' %}">Please Login To Rate</a>
+        {% endif %}
     </div>
   </dd>
   <dd>

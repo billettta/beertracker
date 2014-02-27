@@ -1,6 +1,9 @@
-from django.shortcuts import render, get_object_or_404, render_to_response
+from django.shortcuts import render, get_object_or_404, render_to_response, redirect
 from django.http import HttpResponse
-from tracker.models import Beer,Rating,RatingForm
+from tracker.models import Beer,Rating,RatingForm,NewUserForm
+from django.contrib.auth import authenticate, login
+from django.contrib.auth.models import User
+from django.template import RequestContext
 
 def index(request):
     return HttpResponse("hello world")
@@ -10,7 +13,7 @@ def beerDetail(request, beer_id):
     #should limit for 10 or so with pagination
     ratings = Rating.objects.filter(beer=beer_id)
     form = RatingForm()
-    return render(request, 'tracker/beerDetail.html',{'beer':beer,'rating_list':ratings,'form':form})
+    return render(request, 'tracker/beerDetail.html',{'beer':beer,'rating_list':ratings,'form':form}, context_instance=RequestContext(request))
 
 def breweryDetail(request, brewery_id):
     brewery = get_object_or_404(Brewery, pk=brewery_id)
@@ -48,3 +51,22 @@ def ratingList(request):
 
 def advocate(request):
     return render_to_response('tracker/advocate.html')
+
+def register(request):    
+    if request.method == 'POST':
+        uf = NewUserForm(request.POST)
+        if uf.is_valid():
+            user = uf.save()
+            return redirect(index)   
+        else:
+            return render(request, 'tracker/register.html', { 'form': uf } )
+    else:
+        form = NewUserForm();
+        return render(request, 'tracker/register.html', { 'form': form } )
+
+def login(request):
+    return render(request, 'tracker/login.html')
+
+
+
+

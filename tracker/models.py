@@ -1,6 +1,7 @@
 from django.db import models
-from django.forms import ModelForm
 from django.contrib.auth.models import User
+from django import forms
+from django.forms import ModelForm
 
 # Create your models here.
 class Brewery(models.Model):
@@ -70,5 +71,21 @@ class RatingForm(ModelForm):
     class Meta:
         model = Rating 
         fields = ['date', 'overallRating','volumeRating','notes','taster']
+
+class NewUserForm(ModelForm):
+    class Meta:
+        model = User
+        fields = ['username', 'password', 'first_name', 'last_name', 'email']
+        widgets = {
+            'password': forms.PasswordInput
+        }
+
+    def save(self, commit=True):
+        # Save the provided password in hashed format
+        user = super(NewUserForm, self).save(commit=False)
+        user.set_password(self.cleaned_data["password"])
+        if commit:
+            user.save()
+        return user
 
 #additional objects: team ?
