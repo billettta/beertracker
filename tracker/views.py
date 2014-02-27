@@ -1,9 +1,10 @@
 from django.shortcuts import render, get_object_or_404, render_to_response, redirect
 from django.http import HttpResponse
-from tracker.models import Beer,Rating,RatingForm,NewUserForm
+from tracker.models import Beer,Rating,RatingForm,NewUserForm,Brewery
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
 from django.template import RequestContext
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 def index(request):
     return HttpResponse("hello world")
@@ -17,9 +18,19 @@ def beerDetail(request, beer_id):
 
 def breweryDetail(request, brewery_id):
     brewery = get_object_or_404(Brewery, pk=brewery_id)
-    #should limit for 10 or so with pagination
-    beers = Beer.objects.filter(brewery=brewery_id)
-    return render(request, 'tracker/breweryDetail.html',{'brewery',brewery})
+    orderByField = request.GET.get('order_by', 'name')
+    beer_list = Beer.objects.filter(brewery=brewery_id).order_by(orderByField)
+    paginator = Paginator(beer_list, 20) #Show 20 beers per page
+    page = request.GET.get('page')
+    try:
+        beers = paginator.page(page)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        beers = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver last page of results.
+        beers = paginator.page(paginator.num_pages)
+    return render(request, 'tracker/breweryDetail.html',{'brewery':brewery,'beers':beers}, context_instance=RequestContext(request))
 
 def ratingDetail(request, rating_id):
     rating = get_object_or_404(Rating, pk=rating_id)
