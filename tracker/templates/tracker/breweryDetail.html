@@ -41,9 +41,9 @@
         <table style="width:100%">
         <thead>
         <tr>
-          <th style="width:25%"><a href="?page={{ beers.number }}&order_by={% ifequal request.GET.order_by 'name' %}-{% endifequal %}name">Beer</i></a></th>
-          <th style="width:10%"><a href="?page={{ beers.number }}&order_by={% ifequal request.GET.order_by 'abv' %}-{% endifequal %}abv">ABV</a></th>
-          <th style="width:65%"><a href="?page={{ beers.number }}&order_by={% ifequal request.GET.order_by 'retired' %}-{% endifequal %}retired">Retired</a></th>
+          <th style="width:40%"><a href="?order_by={% ifequal request.GET.order_by 'name' %}-{% endifequal %}name">Beer</i></a></th>
+          <th style="width:10%"><a href="?order_by={% ifequal request.GET.order_by 'abv' %}-{% endifequal %}abv">ABV</a></th>
+          <th style="width:50%"><a href="?order_by={% ifequal request.GET.order_by 'retired' %}-{% endifequal %}retired">Retired</a></th>
         </tr>
         </thead>
         <tbody>
