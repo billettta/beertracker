@@ -1,5 +1,6 @@
 {% extends "tracker/base.html" %}
 {% load static %}
+{% load beer_tags %}
 {% block title %}{{ brewery.name }}{% endblock %}
 {% block active_bar_text %}Rate this Beer!{% endblock %}
 {% block active_bar_link %}#panel1b{% endblock %}
@@ -58,33 +59,28 @@
         </table>
         <div class="pagination-centered">
          <ul class="pagination">
-           <li class="arrow">{% if beers.has_previous %}<a href="?page={{ beers.previous_page_number }}&order_by={% firstof request.GET.order_by 'name'%}">&laquo;</a>{% else %}&laquo;{% endif %}</li>
-           {% for page in beers.paginator.page_range %}
-           <li {% if page == beers.number %}class="current"{% endif %}><a href="?page={{ page }}&order_by={% firstof request.GET.order_by 'name'%}">{{ page }}</a></li>
-           {% endfor %}
+            {% if beers.has_previous %}
+                <li class="arrow"><a href="?page=1&order_by={% firstof request.GET.order_by 'name'%}">&laquo;</a></li>
+                <li class="arrow"><a href="?page={{ beers.previous_page_number }}&order_by={% firstof request.GET.order_by 'name'%}">&lsaquo;</a></li>
+            {% else %}
+                <li class="arrow">&laquo;</li>
+                <li class="arrow">&lsaquo;</li>
+            {% endif %}
+            {% for page in beers.paginator.page_range %}
+                {% if page >= beers.number|subtract:2 and page <= beers.number|add:2 or beers.number >= beers.paginator.num_pages|subtract:2 and page > beers.paginator.num_pages|subtract:5 or beers.number <= 2 and page <= 5 %}
+            <li {% if page == beers.number %}class="current"{% endif %}><a href="?page={{ page }}&order_by={% firstof request.GET.order_by 'name'%}">{{ page }}</a></li>
+                {% endif %}
+            {% endfor %}
 <!--           <li class="unavailable"><a href="">&hellip;</a></li> -->
-           <li class="arrow"><a href="?page={{ beers.next_page_number }}&order_by={% firstof request.GET.order_by 'name'%}">&raquo;</a></li>
+            {% if beers.has_next %}
+                <li class="arrow"><a href="?page={{ beers.next_page_number }}&order_by={% firstof request.GET.order_by 'name'%}">&rsaquo;</a></li>
+                <li class="arrow"><a href="?page={{ beers.paginator.num_pages }}&order_by={% firstof request.GET.order_by 'name'%}">&raquo;</a></li>
+            {% else %}
+                <li class="arrow">&rsaquo;</li>
+                <li class="arrow">&raquo;</li>
+            {% endif %}
         </ul>
        </div>
-        <div class="pagination">
-            <span class="step-links">
-                {% if beers.has_previous %}
-                    <a href="?page={{ beers.previous_page_number }}&order_by={% firstof request.GET.order_by 'name'%}">Previous</a>
-                {% else %}
-                Previous
-                {% endif %}
-
-                <span class="current">
-                    Page {{ beers.number }} of {{ beers.paginator.num_pages }}.
-                </span>
-
-                {% if beers.has_next %}
-                    <a href="?page={{ beers.next_page_number }}&order_by={% firstof request.GET.order_by 'name'%}">Next</a>
-                {% else %}
-                Next
-                {% endif %}
-            </span>
-        </div>
     </div>
 </div>
 <br/><br/>
