@@ -1,0 +1,21 @@
+{% extends "tracker/base.html" %}
+{% load static %}
+{% block title %}{{ beer.name }}{% endblock %}
+{% block active_bar_text %}Rate this Beer!{% endblock %}
+{% block active_bar_link %}#panel1b{% endblock %}
+{% block base_body %}
+{% block content %}
+<br/>
+<div class="row">
+    <div class="large-12 columns">
+        <div class="panel">
+	        <form action="" method="post" {% if form.is_multipart %}enctype="multipart/form-data"{% endif %}>
+                {% csrf_token %}
+		        {{ form.as_p }}
+		        <input type="submit" class="small button" value="Register" />
+	        </form>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+{% endblock base_body %}

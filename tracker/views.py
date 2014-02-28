@@ -1,6 +1,11 @@
-from django.shortcuts import render, get_object_or_404, render_to_response
+from django.shortcuts import render, get_object_or_404, render_to_response, redirect
 from django.http import HttpResponse
-from tracker.models import Beer,Rating,RatingForm
+from tracker.models import Beer,Rating,RatingForm,NewUserForm,Brewery
+from django.contrib.auth import authenticate, login
+from django.contrib.auth.models import User
+from django.template import RequestContext
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.contrib.auth.decorators import login_required
 
 def index(request):
     return HttpResponse("hello world")
@@ -10,13 +15,23 @@ def beerDetail(request, beer_id):
     #should limit for 10 or so with pagination
     ratings = Rating.objects.filter(beer=beer_id)
     form = RatingForm()
-    return render(request, 'tracker/beerDetail.html',{'beer':beer,'rating_list':ratings,'form':form})
+    return render(request, 'tracker/beerDetail.html',{'beer':beer,'rating_list':ratings,'form':form}, context_instance=RequestContext(request))
 
 def breweryDetail(request, brewery_id):
     brewery = get_object_or_404(Brewery, pk=brewery_id)
-    #should limit for 10 or so with pagination
-    beers = Beer.objects.filter(brewery=brewery_id)
-    return render(request, 'tracker/breweryDetail.html',{'brewery',brewery})
+    orderByField = request.GET.get('order_by', 'name')
+    beer_list = Beer.objects.filter(brewery=brewery_id).order_by(orderByField)
+    paginator = Paginator(beer_list, 20) #Show 20 beers per page
+    page = request.GET.get('page')
+    try:
+        beers = paginator.page(page)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        beers = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver last page of results.
+        beers = paginator.page(paginator.num_pages)
+    return render(request, 'tracker/breweryDetail.html',{'brewery':brewery,'beers':beers}, context_instance=RequestContext(request))
 
 def ratingDetail(request, rating_id):
     rating = get_object_or_404(Rating, pk=rating_id)
@@ -46,5 +61,27 @@ def breweryList(request):
 def ratingList(request):
     return HttpResponse("You're looking at beer %s.")
 
+
+@login_required(login_url='/tracker/login/')
 def advocate(request):
     return render_to_response('tracker/advocate.html')
+
+def register(request):    
+    if request.method == 'POST':
+        uf = NewUserForm(request.POST)
+        if uf.is_valid():
+            user = uf.save()
+            new_user = authenticate(username=request.POST['username'],
+                                    password=request.POST['password'])
+            login(request, new_user)
+            return redirect(index)   
+        else:
+            return render(request, 'tracker/register.html', { 'form': uf } )
+    else:
+        form = NewUserForm();
+        return render(request, 'tracker/register.html', { 'form': form } )
+
+
+
+
+

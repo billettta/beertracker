@@ -39,6 +39,13 @@
   <section class="top-bar-section">
     <!-- Right Nav Section -->
     <ul class="right">
+      <li>
+        {% if user.is_authenticated %}
+            <a href="/tracker/logout/">Welcome, {{ user.username }}.</a>
+        {% else %}
+            <a href="{% url 'django.contrib.auth.views.login' %}?next={% firstof request.path '/' %}">Login</a>
+        {% endif %}
+      </li>
       <li class="active"><a href="{% block active_bar_link %}#{% endblock %}">{% block active_bar_text %}test{% endblock active_bar_text %}</a></li>
       <li class="has-form">
         <div class="row collapse">
