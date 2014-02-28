@@ -37,24 +37,22 @@ class Beer(models.Model):
     def __unicode__(self):
         return self.name
 
+#do we even need this class ? description is the only one that would be covered in the generic user
 class Taster(models.Model):
-#    user = models.OneToOneField(User)
+    user = models.OneToOneField(User)
     description = models.TextField(blank=True)
     nickName = models.CharField(max_length=250,blank=True)
-    # think these might be able to be pulled in from generic user class
-    first = models.CharField(max_length=200)
-    last = models.CharField(max_length=200)
-    email = models.EmailField(max_length=254)
     def __unicode__(self):
         return self.nickName
 
 class Rating(models.Model):
     beer = models.ForeignKey(Beer)
-    taster = models.ForeignKey(Taster)
+    user = models.ForeignKey(User)
     date = models.DateField()
     overallRating = models.DecimalField(max_digits=3,decimal_places=1)
     volumeRating = models.DecimalField(max_digits=3,decimal_places=1,blank=True)
     notes = models.TextField(blank=True)
+    picture = models.ImageField(upload_to='rateshots')
     # right now this is calculated when called instead of stored in DB probably want to switch so its only calculated once
     def _get_drunk(self):
         "Returns the drunkability"
@@ -62,7 +60,7 @@ class Rating(models.Model):
     drunkRating = property(_get_drunk)
 
 class Quote(models.Model):
-    authors = models.ManyToManyField(Taster)
+    authors = models.ManyToManyField(User)
     quoteText = models.TextField()
     #should be taken from logged in user
 #    submiter = models.ForeignKey(Taster)
@@ -70,7 +68,7 @@ class Quote(models.Model):
 class RatingForm(ModelForm):
     class Meta:
         model = Rating 
-        fields = ['date', 'overallRating','volumeRating','notes','taster']
+        fields = ['date', 'overallRating','volumeRating','notes','picture']
 
 class NewUserForm(ModelForm):
     class Meta:
