@@ -67,7 +67,7 @@
                 <li class="arrow">&lsaquo;</li>
             {% endif %}
             {% for page in beers.paginator.page_range %}
-                {% if page >= beers.number|subtract:2 and page <= beers.number|add:2 or beers.number >= beers.paginator.num_pages|subtract:2 and page > beers.paginator.num_pages|subtract:5 or beers.number <= 2 and page <= 5 %}
+                {% if page >= beers.number|subtract:3 and page <= beers.number|add:3 or beers.number >= beers.paginator.num_pages|subtract:3 and page > beers.paginator.num_pages|subtract:7 or beers.number <= 3 and page <= 7 %}
             <li {% if page == beers.number %}class="current"{% endif %}><a href="?page={{ page }}&order_by={% firstof request.GET.order_by 'name'%}">{{ page }}</a></li>
                 {% endif %}
             {% endfor %}
