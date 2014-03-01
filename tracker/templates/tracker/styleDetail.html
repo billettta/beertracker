@@ -36,30 +36,7 @@
     </div>
   </div>  
 </div>
-
-<div class="row">
-  <div class="large-12 columns">
-        <table style="width:100%">
-        <thead>
-        <tr>
-          <th style="width:40%"><a href="?order_by={% ifequal request.GET.order_by 'name' %}-{% endifequal %}name">Beer</i></a></th>
-          <th style="width:10%"><a href="?order_by={% ifequal request.GET.order_by 'abv' %}-{% endifequal %}abv">ABV</a></th>
-          <th style="width:50%"><a href="?order_by={% ifequal request.GET.order_by 'retired' %}-{% endifequal %}retired">Retired</a></th>
-        </tr>
-        </thead>
-        <tbody>
-        {% for beer in beers %}
-        <tr>
-          <td><a href="/tracker/beer/{{ beer.id }}/">{{ beer.name }}</a></td>
-          <td>{% if beer.abv %}{{ beer.abv }}{% else %}?{% endif %}</td>
-          <td>{{ beer.retired }}</td>
-        </tr>
-        {% endfor %}
-        </tbody>
-        </table>
-        {% paginateNumbers beers orderBy=request.GET.order_by defaultOrderBy='name' %}
-    </div>
-</div>
+{% beerTable beers orderBy=request.GET.order_by defaultOrderBy='name' %}
 <br/><br/>
 {% endblock content %}
 {% endblock base_body %}

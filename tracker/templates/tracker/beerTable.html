@@ -1,0 +1,24 @@
+{% load beer_tags %}
+<div class="row">
+  <div class="large-12 columns">
+        <table style="width:100%">
+        <thead>
+        <tr>
+          <th style="width:40%"><a href="?order_by={% ifequal orderBy 'name' %}-{% endifequal %}name">Beer</i></a></th>
+          <th style="width:10%"><a href="?order_by={% ifequal orderBy 'abv' %}-{% endifequal %}abv">ABV</a></th>
+          <th style="width:50%"><a href="?order_by={% ifequal orderBy 'retired' %}-{% endifequal %}retired">Retired</a></th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for beer in beers %}
+        <tr>
+          <td><a href="/tracker/beer/{{ beer.id }}/">{{ beer.name }}</a></td>
+          <td>{% if beer.abv %}{{ beer.abv }}{% else %}?{% endif %}</td>
+          <td>{{ beer.retired }}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+        </table>
+        {% paginateNumbers beers orderBy=orderBy defaultOrderBy='name' %}
+    </div>
+</div>
