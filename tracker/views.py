@@ -6,6 +6,7 @@ from django.contrib.auth.models import User
 from django.template import RequestContext
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib.auth.decorators import login_required
+from django.db.models import Avg, Max
 
 def index(request):
     return HttpResponse("hello world")
@@ -31,7 +32,7 @@ def beerDetail(request, beer_id):
 def breweryDetail(request, brewery_id):
     brewery = get_object_or_404(Brewery, pk=brewery_id)
     orderByField = request.GET.get('order_by', 'name')
-    beer_list = Beer.objects.filter(brewery=brewery_id).order_by(orderByField)
+    beer_list = Beer.objects.filter(brewery=brewery_id).annotate(avg_rating=Avg('rating__overallRating'), avg_volume=Avg('rating__volumeRating')).order_by(orderByField)
     paginator = Paginator(beer_list, 20) #Show 20 beers per page
     page = request.GET.get('page')
     try:
@@ -42,7 +43,7 @@ def breweryDetail(request, brewery_id):
     except EmptyPage:
         # If page is out of range (e.g. 9999), deliver last page of results.
         beers = paginator.page(paginator.num_pages)
-    return render(request, 'tracker/breweryDetail.html',{'brewery':brewery,'beers':beers}, context_instance=RequestContext(request))
+    return render(request, 'tracker/breweryDetail.html',{'brewery':brewery,'beers':beers }, context_instance=RequestContext(request))
 
 def ratingDetail(request, rating_id):
     rating = get_object_or_404(Rating, pk=rating_id)
@@ -51,7 +52,7 @@ def ratingDetail(request, rating_id):
 def styleDetail(request, style_id):
     style = get_object_or_404(Style, pk=style_id)
     orderByField = request.GET.get('order_by', 'name')
-    beer_list = Beer.objects.filter(style=style_id).order_by(orderByField)
+    beer_list = Beer.objects.filter(style=style_id).annotate(avg_rating=Avg('rating__overallRating'), avg_volume=Avg('rating__volumeRating')).order_by(orderByField)
     paginator = Paginator(beer_list, 20) #Show 20 beers per page
     page = request.GET.get('page')
     try:
