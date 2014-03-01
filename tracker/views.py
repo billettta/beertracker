@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404, render_to_response, redirect
 from django.http import HttpResponse
-from tracker.models import Beer,Rating,RatingForm,NewUserForm,Brewery
+from tracker.models import Beer,Rating,RatingForm,NewUserForm,Brewery,Style
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
 from django.template import RequestContext
@@ -49,8 +49,20 @@ def ratingDetail(request, rating_id):
     return render(request, 'tracker/ratingDetail.html',{'rating',rating})
 
 def styleDetail(request, style_id):
-    style = get_object_or_404(Beer, pk=style_id)
-    return render(request, 'tracker/styleDetail.html',{'style',style})
+    style = get_object_or_404(Style, pk=style_id)
+    orderByField = request.GET.get('order_by', 'name')
+    beer_list = Beer.objects.filter(style=style_id).order_by(orderByField)
+    paginator = Paginator(beer_list, 20) #Show 20 beers per page
+    page = request.GET.get('page')
+    try:
+        beers = paginator.page(page)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        beers = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver last page of results.
+        beers = paginator.page(paginator.num_pages)
+    return render(request, 'tracker/styleDetail.html',{'style':style, 'beers':beers}, context_instance=RequestContext(request))
 
 #this could maybe be a on a profile page instead ?
 def myRatings(request,tracker_id):
