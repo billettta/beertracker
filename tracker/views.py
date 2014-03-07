@@ -13,9 +13,21 @@ def index(request):
 
 def beerDetail(request, beer_id):
     beer = get_object_or_404(Beer, pk=beer_id)
-    orderByField = request.GET.get('order_by', 'date')
+    form = RatingForm()
+
+    if request.method == 'POST':
+        rf = RatingForm(request.POST, request.FILES)
+        if rf.is_valid():
+            ratingForm = rf.save(commit=False)
+            ratingForm.user = request.user
+            ratingForm.beer = beer
+            ratingForm.save()
+        else:
+            form = rf
+
+    orderByField = request.GET.get('order_by', '-date')
     rating_list = Rating.objects.filter(beer=beer_id).order_by(orderByField)
-    paginator = Paginator(rating_list, 20) #Show 20 ratings per page
+    paginator = Paginator(rating_list, 10) #Show 10 ratings per page
     page = request.GET.get('page')
     try:
         ratings = paginator.page(page)
@@ -26,7 +38,7 @@ def beerDetail(request, beer_id):
         # If page is out of range (e.g. 9999), deliver last page of results.
         ratings = paginator.page(paginator.num_pages)
 
-    form = RatingForm()
+
     return render(request, 'tracker/beerDetail.html',{'beer':beer,'rating_list':ratings,'form':form}, context_instance=RequestContext(request))
 
 def breweryDetail(request, brewery_id):

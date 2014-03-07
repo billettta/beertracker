@@ -31,7 +31,7 @@ class Beer(models.Model):
     abv = models.DecimalField(max_digits=3,decimal_places=1,null=True)
     #uploads to MEDIA_ROOT/beershots need to serve from apache or S3(eventually)
     #need to figure out how to rename to name of beer and put in folder for brewery
-    picture = models.ImageField(upload_to='beershots')
+    picture = models.ImageField(upload_to='beershots',blank=True)
     # additional fields: average rating ?
     retired = models.BooleanField(default=False)
     def __unicode__(self):
@@ -42,6 +42,7 @@ class Taster(models.Model):
     user = models.OneToOneField(User)
     description = models.TextField(blank=True)
     nickName = models.CharField(max_length=250,blank=True)
+    picture = models.ImageField(upload_to='tastershots',blank=True)
     def __unicode__(self):
         return self.nickName
 
@@ -52,7 +53,7 @@ class Rating(models.Model):
     overallRating = models.DecimalField(max_digits=3,decimal_places=1)
     volumeRating = models.DecimalField(max_digits=3,decimal_places=1,blank=True)
     notes = models.TextField(blank=True)
-    picture = models.ImageField(upload_to='rateshots')
+    picture = models.ImageField(upload_to='ratingshots',blank=True)
     # right now this is calculated when called instead of stored in DB probably want to switch so its only calculated once
     def _get_drunk(self):
         "Returns the drunkability"

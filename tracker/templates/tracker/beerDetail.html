@@ -1,5 +1,6 @@
 {% extends "tracker/base.html" %}
 {% load static %}
+{% load beer_tags %}
 {% block title %}{{ beer.name }}{% endblock %}
 {% block active_bar_text %}Rate this Beer!{% endblock %}
 {% block active_bar_link %}#panel1b{% endblock %}
@@ -46,9 +47,9 @@
 <dl class="accordion" data-accordion>
   <dd>
     <a href="#panel1a">Rate this Beer!</a>
-    <div id="panel1a" class="content">
+    <div id="panel1a" class="{% ifequal form.is_bound True %}contentactive{% else %}content{% endifequal %}">
         {% if user.is_authenticated %}
-          <form action="tracker/beer/{{ beer.id }}" method="post"
+          <form action="" method="post"
          {% if form.is_multipart %}enctype="multipart/form-data"{% endif %}>{% csrf_token %}
             {{ form.as_p }}
             <input type="submit" class="small button" value="Submit" />
@@ -64,24 +65,29 @@
 
 {% for rating in rating_list %}
 <div class="row">
-  <div class="large-8 columns">
+  <div class="large-12 columns">
     <table style="width:100%">
       <tbody>
         <tr>
-          <td style="width:35%"><b>Reviewer:</b> {{ rating.taster.nickName }}</td>
+          <td style="width:35%"><b>Reviewer:</b> {% if rating.taster.nickName %}{{ rating.taster.nickName }}{% else %}{{ rating.user.username }}{% endif %}</td>
           <td style="width:20%"><b>Flavor:</b> {{ rating.overallRating }}</td>
           <td style="width:20%"><b>Volume:</b> {{ rating.volumeRating }}</td>
           <td style="width:25%"><b>Date:</b> {{ rating.date }}</td>
         </tr>
         <tr>
-          <td colspan="4">{{ rating.notes}}</td>
+            {% if rating.picture %}
+                <td colspan="3" style="word-break:break-all">{{ rating.notes }}</td>
+                <td colspan="1"><img src ="{{ MEDIA_URL }}{{ rating.picture }}"></td>    
+            {% else %}
+                <td colspan="4" style="word-break:break-all">{{ rating.notes }}</td>           
+            {% endif %}
         </tr>
       </tbody>
     </table>     
   </div>
 </div>
 {% endfor %}
-<!-- need to put in pagination -->
+{% paginateNumbers rating_list orderBy=request.GET.order_by defaultOrderBy='date' %}
     </div>
   </dd>
 </dl>
