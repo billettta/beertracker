@@ -6,11 +6,17 @@
 {% block active_bar_link %}#panel1b{% endblock %}
 {% block base_body %}
 {% block content %}
+<link rel="stylesheet" type="text/css" href="{% static 'resources/css/jquery-ui-1.10.4.custom.min.css' %}" />
 <script type="text/javascript" src="{% static 'resources/js/vendor/jquery.js' %}"></script>
+<script src="{% static 'resources/js/vendor/jquery-ui-1.10.4.custom.min.js' %}"></script>
 <script type="text/javascript">
     $(document).ready(function(){
-        $('tr .ratingHeader').click(function() {
-            $(this).closest('.ratingTable').children('tbody .ratingBody').toggle('fast');
+        $('tr .ratingHeader').click(function(event) {
+            if(typeof $(event.target).closest('a') == "undefined" || $(event.target).closest('a').length == 0)
+            {
+                $(this).children('th:first').find('span:first').toggleClass('ui-icon-circle-plus').toggleClass('ui-icon-circle-minus');
+                $(this).closest('.ratingTable').children('tbody .ratingBody').toggle('fast');
+            }
         });
     });
 </script>
@@ -76,7 +82,7 @@
                                         <table style="width:100%;margin:0px" class="ratingTable">
                                             <thead>
                                                 <tr class="ratingHeader">
-                                                  <th style="width:25%"><a href="/tracker/beer/{{ rating.beer_id }}/">{{ rating.beer.name }}</a></th>
+                                                  <th style="width:25%"><span class="ui-icon ui-icon-circle-plus"></span><a href="/tracker/beer/{{ rating.beer_id }}/">&nbsp;{{ rating.beer.name }}</a></th>
                                                   <th style="width:25%"><a href="/tracker/brewery/{{ rating.beer.brewery_id }}/">{{ rating.beer.brewery.name }}</a></th>
                                                   <th style="width:20%"><a href="/tracker/style/{{ rating.beer.style_id }}/">{{ rating.beer.style.name }}</a></th>
                                                   <th style="width:5%">{{ rating.overallRating }}</th>
