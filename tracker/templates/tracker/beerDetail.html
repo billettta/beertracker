@@ -4,6 +4,18 @@
 {% block title %}{{ beer.name }}{% endblock %}
 {% block active_bar_text %}Rate this Beer!{% endblock %}
 {% block active_bar_link %}#panel1b{% endblock %}
+{% block head_js %}
+<link rel="stylesheet" type="text/css" href="{% static 'resources/css/jquery-ui-1.10.4.custom.min.css' %}" />
+<script src="{% static 'resources/js/vendor/jquery.js' %}"></script>
+<script src="{% static 'resources/js/vendor/jquery-ui-1.10.4.custom.min.js' %}"></script>
+ <script>
+jQuery(function($){
+  $(function() {
+    $( "#id_date" ).datepicker({ changeMonth: true });
+  });
+});
+  </script>
+{% endblock head_js %}
 {% block base_body %}
 {% block content %}
 <br/>
@@ -51,7 +63,27 @@
         {% if user.is_authenticated %}
           <form action="" method="post"
          {% if form.is_multipart %}enctype="multipart/form-data"{% endif %}>{% csrf_token %}
-            {{ form.as_p }}
+           <div class="row">
+             <div class="large-4 columns">
+               <p><label for="id_date">Date:</label> 
+               <input id="id_date" name="date" type="text" value="{% now "SHORT_DATE_FORMAT" %}" /></p>
+             </div>
+             <div class="large-4 columns">
+               <p><label for="id_overallRating">Overall Rating:</label> 
+               <input id="id_overallRating" max="10.0" min="0" name="overallRating" step="0.1" type="number" /></p>
+             </div>
+             <div class="large-4 columns">
+               <p><label for="id_volumeRating">Volume Rating:</label> 
+               <input id="id_volumeRating" max="10.0" min="0" name="volumeRating" step="0.1" type="number" /></p>
+             </div>
+           </div>
+           <div class="row">
+             <div class="large-12 columns">
+              <label for="id_notes">Notes:</label> <textarea cols="40" id="id_notes" name="notes" rows="40"/></textarea></p>
+             </div>
+           </div>
+           <p><label for="id_picture">Picture:</label> <input id="id_picture" name="picture" type="file" /></p>
+
             <input type="submit" class="small button" value="Submit" />
           </form>
         {% else %}

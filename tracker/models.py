@@ -66,7 +66,12 @@ class Quote(models.Model):
     authors = models.ManyToManyField(User)
     quoteText = models.TextField()
     #should be taken from logged in user
-#    submiter = models.ForeignKey(Taster)
+    submiter = models.ForeignKey(Taster)
+
+class Team(models.Model):
+    members = models.ManyToManyField(User)
+    name = models.CharField(max_length=250,blank=True)
+    description = models.TextField(blank=True)
 
 class RatingForm(ModelForm):
     date = forms.DateTimeField(input_formats=['%m/%d/%Y'],initial=datetime.date.today().strftime("%d/%m/%Y"))
