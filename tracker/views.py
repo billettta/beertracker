@@ -79,8 +79,12 @@ def styleDetail(request, style_id):
 
 @login_required(login_url='/tracker/login/')
 def myProfile(request):
+    return redirect(profile, request.user.id )
+
+def profile(request, user_id):
+    user = get_object_or_404(User, pk=user_id)
     orderByField = request.GET.get('order_by', '-date')
-    rating_list = Rating.objects.filter(user_id=request.user).order_by(orderByField)
+    rating_list = Rating.objects.filter(user_id=user_id).order_by(orderByField)
     paginator = Paginator(rating_list, 10) #Show 10 ratings per page
     page = request.GET.get('page')
     try:
@@ -93,7 +97,7 @@ def myProfile(request):
         ratings = paginator.page(paginator.num_pages)
 
 
-    return render(request, 'tracker/profile.html',{ 'rating_list':ratings }, context_instance=RequestContext(request))
+    return render(request, 'tracker/profile.html',{ 'userProfile': user, 'rating_list':ratings }, context_instance=RequestContext(request))
 
 
 #do we actually need a style list view ?
