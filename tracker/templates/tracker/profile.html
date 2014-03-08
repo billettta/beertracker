@@ -1,0 +1,113 @@
+{% extends "tracker/base.html" %}
+{% load static %}
+{% load beer_tags %}
+{% block title %}{{ beer.name }}{% endblock %}
+{% block active_bar_text %}Rate this Beer!{% endblock %}
+{% block active_bar_link %}#panel1b{% endblock %}
+{% block base_body %}
+{% block content %}
+<script type="text/javascript" src="{% static 'resources/js/vendor/jquery.js' %}"></script>
+<script type="text/javascript">
+    $(document).ready(function(){
+        $('tr').click(function() {
+            debugger;
+            $(this).closest('.ratingTable').children('tbody').toggle('fast');
+        });
+    });
+</script>
+<br/>
+<div class="row">
+    <div class="panel">
+        <h3>{{ user.username }}<small> - {{ user.first_name }}{% if user.taster.nickName %} "{{ user.taster.nickName }}"{% endif %} {{ user.last_name }}</small></h3>
+        <div class="row">
+            <div class="large-2 columns">
+              {% if user.taster.picture %}
+                <img src="{{ user.taster.picture.url }}">
+              {% else %}
+                <img src="http://placehold.it/200x300&Text=Image">
+              {% endif %}
+            </div>
+	        <div class="large-10 columns end">
+		        <div class="row">
+			        <div class="large-10 columns end">
+                        <br/>
+                        {% if user.email %}<a href="mailto:{{ user.email }}">{{ user.email }}</a>{% else %}No Email Found{% endif %}
+			        </div>
+		        </div>
+		        <div class="row">
+			        <div class="large-10 columns end">
+                        <br/>
+				        Joined: {{ user.date_joined | date:"F n, Y" }}
+			        </div>
+		        </div>
+		        <div class="row">
+			        <div class="large-10 columns end">
+                        <br/>
+				        {{ user.taster.description | safe }}
+			        </div>	
+		        </div>
+	        </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="row">
+    <dl class="accordion" data-accordion>
+        <dd>
+            <a href="#myRatingsPanel">My Ratings</a>
+            <div class="panel content active" id="myRatingsPanel">
+                <table style="width:100%">
+                    <thead>
+                        <tr style="background-color:#36454F">
+                            <th style="width:25%"><a href="?order_by={% ifequal request.GET.order_by 'beer__name' %}-{% endifequal %}beer__name">Beer</a></th>
+                            <th style="width:25%"><a href="?order_by={% ifequal request.GET.order_by 'beer__brewery__name' %}-{% endifequal %}beer__brewery__name">Brewery</a></th>
+                            <th style="width:20%"><a href="?order_by={% ifequal request.GET.order_by 'beer__style__name' %}-{% endifequal %}beer__style__name">Style</a></th>
+                            <th style="width:5%"><a href="?order_by={% ifequal request.GET.order_by 'overallRating' %}-{% endifequal %}overallRating">Flavor</a></th>
+                            <th style="width:5%"><a href="?order_by={% ifequal request.GET.order_by 'volumeRating' %}-{% endifequal %}volumeRating">Volume</a></th>
+                            <th style="width:5%"><a href="?order_by={% ifequal request.GET.order_by 'drunkRating' %}-{% endifequal %}drunkRating">Drunk</th>
+                            <th style="width:10%"><a href="?order_by={% ifequal request.GET.order_by 'date' %}-{% endifequal %}date">Date</a></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for rating in rating_list %}
+                            <tr style="background-color:#36454F">
+                                <td colspan="7" style="padding:0px">
+                                    <table style="width:100%;margin:0px" class="ratingTable">
+                                        <thead>
+                                            <tr>
+                                              <th style="width:25%"><a href="/tracker/beer/{{ rating.beer_id }}/">{{ rating.beer.name }}</a></th>
+                                              <th style="width:25%"><a href="/tracker/brewery/{{ rating.beer.brewery_id }}/">{{ rating.beer.brewery.name }}</a></th>
+                                              <th style="width:20%"><a href="/tracker/style/{{ rating.beer.style_id }}/">{{ rating.beer.style.name }}</a></th>
+                                              <th style="width:5%">{{ rating.overallRating }}</th>
+                                              <th style="width:5%">{{ rating.volumeRating }}</th>
+                                              <th style="width:5%">{{ rating.drunkRating }}</th>
+                                              <th style="width:10%"">{{ rating.date|date:"m/d/Y" }}</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody style="display:none">
+                                            <tr>
+                                                {% if rating.picture %}
+                                                    <td colspan="5" style="word-break:break-all">{{ rating.notes }}</td>                 
+                                                    <td colspan="2"><img src ="{{ rating.picture.url }}"></td>   
+                                                {% else %}
+                                                    <td colspan="7" style="word-break:break-all">{{ rating.notes }}</td>           
+                                                {% endif %}
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% paginateNumbers rating_list orderBy=request.GET.order_by defaultOrderBy='-date' %}
+            </div>
+        </dd>
+    </dl>
+</div>
+
+
+<br/><br/>
+{% endblock content %}
+{% endblock base_body %}

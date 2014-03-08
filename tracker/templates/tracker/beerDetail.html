@@ -77,7 +77,7 @@
         <tr>
             {% if rating.picture %}
                 <td colspan="3" style="word-break:break-all">{{ rating.notes }}</td>
-                <td colspan="1"><img src ="{{ MEDIA_URL }}{{ rating.picture }}"></td>    
+                <td colspan="1"><img src ="{{ rating.picture.url }}"></td>    
             {% else %}
                 <td colspan="4" style="word-break:break-all">{{ rating.notes }}</td>           
             {% endif %}
@@ -87,7 +87,7 @@
   </div>
 </div>
 {% endfor %}
-{% paginateNumbers rating_list orderBy=request.GET.order_by defaultOrderBy='date' %}
+{% paginateNumbers rating_list orderBy=request.GET.order_by defaultOrderBy='-date' %}
     </div>
   </dd>
 </dl>

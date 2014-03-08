@@ -13,4 +13,4 @@ urlpatterns = patterns('',
     url(r'^tracker/', include('tracker.urls')),
     url(r'^advocate/$', 'tracker.views.advocate'),
     url(r'^(?P<path>.*)$', 'django.views.static.serve', {'document_root': '/apps/static'}),
-) #+ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+)#+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

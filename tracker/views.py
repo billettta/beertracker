@@ -77,11 +77,24 @@ def styleDetail(request, style_id):
         beers = paginator.page(paginator.num_pages)
     return render(request, 'tracker/styleDetail.html',{'style':style, 'beers':beers}, context_instance=RequestContext(request))
 
-#this could maybe be a on a profile page instead ?
-def myRatings(request,tracker_id):
-    #should probably actually look up on logged in user
-    ratings  = Ratigns.objects.filter(tracker=tracker_id)
-    return render(request, 'tracker/ratingsList.html',{'ratings',ratings})
+@login_required(login_url='/tracker/login/')
+def myProfile(request):
+    orderByField = request.GET.get('order_by', '-date')
+    rating_list = Rating.objects.filter(user_id=request.user).order_by(orderByField)
+    paginator = Paginator(rating_list, 10) #Show 10 ratings per page
+    page = request.GET.get('page')
+    try:
+        ratings = paginator.page(page)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        ratings = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver last page of results.
+        ratings = paginator.page(paginator.num_pages)
+
+
+    return render(request, 'tracker/profile.html',{ 'rating_list':ratings }, context_instance=RequestContext(request))
+
 
 #do we actually need a style list view ?
 #maybe as a way to select a style and then view all of the beers of it

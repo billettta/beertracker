@@ -57,7 +57,7 @@ class Rating(models.Model):
     # right now this is calculated when called instead of stored in DB probably want to switch so its only calculated once
     def _get_drunk(self):
         "Returns the drunkability"
-        return (beer.abv * self.VolumeRating)/10
+        return (self.beer.abv * self.volumeRating)/10
     drunkRating = property(_get_drunk)
 
 class Quote(models.Model):

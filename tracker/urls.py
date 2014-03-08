@@ -1,6 +1,7 @@
 from django.conf.urls import patterns,url
 from tracker import views
 
+
 urlpatterns = patterns('',
     url(r'^$',views.index,name='index'),
 
@@ -10,6 +11,7 @@ urlpatterns = patterns('',
     url(r'^beer/(?P<beer_id>\d+)/?$', views.beerDetail, name='beerDetail'),
     url(r'^brewery/(?P<brewery_id>\d+)/?$', views.breweryDetail, name='breweryDetail'),
     url(r'^style/(?P<style_id>\d+)/?$', views.styleDetail, name='styleDetail'),
+    url(r'^profile/?$', views.myProfile, name='myProfile'),
     url(r'^(?P<poll_id>\d+)/$', views.beerDetail, name='beerDetail'),
     url(r'^(?P<beer_id>\d+)/beer/$', views.beerDetail, name='beerDetail'),
 )
