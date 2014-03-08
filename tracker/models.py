@@ -2,6 +2,8 @@ from django.db import models
 from django.contrib.auth.models import User
 from django import forms
 from django.forms import ModelForm
+from django.forms.extras.widgets import SelectDateWidget
+import datetime
 
 # Create your models here.
 class Brewery(models.Model):
@@ -67,6 +69,9 @@ class Quote(models.Model):
 #    submiter = models.ForeignKey(Taster)
 
 class RatingForm(ModelForm):
+    date = forms.DateTimeField(input_formats=['%m/%d/%Y'],initial=datetime.date.today().strftime("%d/%m/%Y"))
+    overallRating = forms.DecimalField(max_digits=3,decimal_places=1,min_value=0,max_value=10.0,required=True)
+    volumeRating = forms.DecimalField(max_digits=3,decimal_places=1,min_value=0,max_value=10.0,required=False)
     class Meta:
         model = Rating 
         fields = ['date', 'overallRating','volumeRating','notes','picture']
