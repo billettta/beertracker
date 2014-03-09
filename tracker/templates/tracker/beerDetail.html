@@ -46,6 +46,13 @@ jQuery(function($){
 				{{ beer.description | safe}}
 			</div>	
 		</div>
+        {% if beer.retired %}
+		<div class="row">
+			<div class="large-10 columns end">
+				<b>Note: This beer is retired.</b>
+			</div>
+		</div>
+        {% endif %}
 	</div>
       </div>
     </div>
