@@ -12,8 +12,12 @@
         $('tr .ratingHeader').click(function(event) {
             if(typeof $(event.target).closest('a') == "undefined" || $(event.target).closest('a').length == 0)
             {
-                $(this).children('th:first').find('span:first').toggleClass('ui-icon-circle-plus').toggleClass('ui-icon-circle-minus');
-                $(this).closest('.ratingTable').children('tbody .ratingBody').toggle('fast');
+                var plusSign = $(this).children('th:first').find('span:first')
+                if(plusSign.length > 0)
+                {
+                    plusSign.toggleClass('ui-icon-circle-plus').toggleClass('ui-icon-circle-minus');
+                    $(this).closest('.ratingTable').children('tbody .ratingBody').toggle('fast');
+                }
             }
         });
         $('#ratingsPanel').click(function(event) {
@@ -83,7 +87,7 @@
                                         <table style="width:100%;margin:0px" class="ratingTable">
                                             <thead>
                                                 <tr class="ratingHeader">
-                                                  <th style="width:25%"><span class="ui-icon ui-icon-circle-plus"></span><a href="/tracker/beer/{{ rating.beer_id }}/">&nbsp;{{ rating.beer.name }}</a></th>
+                                                  <th style="width:25%">{% if rating.notes or rating.picture %}<span class="ui-icon ui-icon-circle-plus"></span>{% endif %}<a href="/tracker/beer/{{ rating.beer_id }}/">&nbsp;{{ rating.beer.name }}</a></th>
                                                   <th style="width:25%"><a href="/tracker/brewery/{{ rating.beer.brewery_id }}/">{{ rating.beer.brewery.name }}</a></th>
                                                   <th style="width:20%"><a href="/tracker/style/{{ rating.beer.style_id }}/">{{ rating.beer.style.name }}</a></th>
                                                   <th style="width:5%">{{ rating.overallRating }}</th>

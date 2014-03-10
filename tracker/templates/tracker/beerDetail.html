@@ -7,12 +7,27 @@
 <script src="{% static 'resources/js/vendor/jquery.js' %}"></script>
 <script src="{% static 'resources/js/vendor/jquery-ui-1.10.4.custom.min.js' %}"></script>
  <script>
-jQuery(function($){
-  $(function() {
-    $( "#id_date" ).datepicker({ changeMonth: true });
-  });
-});
-  </script>
+    jQuery(function($){
+      $(function() {
+        $( "#id_date" ).datepicker();
+      });
+    });
+
+    $(document).ready(function() {
+        $('#viewRatingsPanel, #rateBeerPanel').click(function(event) {
+            $(this).find('span:first').toggleClass('ui-icon-plusthick').toggleClass('ui-icon-minusthick');
+
+            if($(this).attr('id') == 'viewRatingsPanel')
+            {
+                $('#rateBeerPanel').find('span:first').addClass('ui-icon-plusthick').removeClass('ui-icon-minusthick');
+            }
+            else
+            {
+                $('#viewRatingsPanel').find('span:first').addClass('ui-icon-plusthick').removeClass('ui-icon-minusthick');
+            }
+        });
+    });
+</script>
 {% endblock head_js %}
 {% block base_body %}
 {% block content %}
@@ -31,7 +46,7 @@ jQuery(function($){
 			  ABV: {{ beer.abv }} %
 			</div>
 			<div class="large-8 columns end">
-			  Style: <a href="/tracker/style/{{ beer.style.id }}">{{ beer.style.name}}</a>
+			  Style: <a href="/tracker/style/{{ beer.style.id }}">{{ beer.style.name }}</a>
 			</div>
 		</div>
 		<div class="row">
@@ -41,7 +56,7 @@ jQuery(function($){
 		</div>
 		<div class="row">
 			<div class="large-10 columns end">
-				{{ beer.description | safe}}
+				{{ beer.description | safe }}
 			</div>	
 		</div>
         {% if beer.retired %}
@@ -61,8 +76,8 @@ jQuery(function($){
   <div class="large-12 columns">
 <dl class="accordion" data-accordion>
   <dd>
-    <a href="#panel1a">Rate this Beer!</a>
-    <div id="panel1a" class="{% ifequal form.is_bound True %}contentactive{% else %}content{% endifequal %}">
+    <a href="#panel1a" id="rateBeerPanel"><span class="ui-icon ui-icon-minusthick"></span>&nbsp;Rate this Beer!</a>
+    <div id="panel1a" class="content active">
         {% if user.is_authenticated %}
           <form action="" method="post"
          {% if form.is_multipart %}enctype="multipart/form-data"{% endif %}>{% csrf_token %}
@@ -85,9 +100,16 @@ jQuery(function($){
               <label for="id_notes">Notes:</label> <textarea cols="40" id="id_notes" name="notes" rows="40"/></textarea></p>
              </div>
            </div>
-           <p><label for="id_picture">Picture:</label> <input id="id_picture" name="picture" type="file" /></p>
-
-            <input type="submit" class="small button" value="Submit" />
+           <div class="row">
+             <div class="large-9 columns">
+               <p><label for="id_date">Picture:</label> 
+               <input id="id_picture" name="picture" type="file" /></p>
+             </div>
+             <div class="large-3 columns">
+               <p><input type="submit" class="small button" value="Submit" style="width:100%"/></p>
+             </div>
+           </div>
+            
           </form>
         {% else %}
             <a href="{% url 'django.contrib.auth.views.login' %}?next={% firstof request.path '/' %}">Please Login To Rate</a>
@@ -95,7 +117,7 @@ jQuery(function($){
     </div>
   </dd>
   <dd>
-    <a href="#panel1b">View Ratings</a>
+    <a href="#panel1b" id="viewRatingsPanel"><span class="ui-icon ui-icon-plusthick"></span>&nbsp;View Ratings</a>
     <div id="panel1b" class="content">
 
 {% for rating in rating_list %}
