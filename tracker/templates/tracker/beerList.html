@@ -1,0 +1,11 @@
+{% extends "tracker/base.html" %}
+{% load static %}
+{% load beer_tags %}
+{% block title %}Beer List{% endblock %}
+{% block base_body %}
+{% block content %}
+<br/>
+{% beerTable beers orderBy=request.GET.order_by defaultOrderBy='name' %}
+<br/><br/>
+{% endblock content %}
+{% endblock base_body %}

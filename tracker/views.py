@@ -8,12 +8,73 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib.auth.decorators import login_required
 from django.db.models import Avg, Max, Count
 from django.contrib.auth.decorators import user_passes_test
+from django.core.exceptions import FieldError
 
 def index(request):
     beerCount = Beer.objects.count()
     breweryCount = Brewery.objects.count()
     ratingCount = Rating.objects.count()
     return render(request, 'tracker/welcome.html',{'beerCount':beerCount,'breweryCount':breweryCount,'ratingCount':ratingCount}, context_instance=RequestContext(request))
+
+def search(request):
+    searchString = request.GET.get('searchString', '')
+    orderByField = request.GET.get('order_by', 'name')
+
+    try:
+        str(Beer.objects.filter(name__icontains=searchString).order_by(orderByField).query)
+        beer_list = Beer.objects.filter(name__icontains=searchString).order_by(orderByField)
+    except FieldError:
+        beer_list = Beer.objects.filter(name__icontains=searchString).order_by('name')
+
+    try:
+        str(Brewery.objects.filter(name__icontains=searchString).order_by(orderByField).query)
+        brewery_list = Brewery.objects.filter(name__icontains=searchString).order_by(orderByField)
+    except:
+        brewery_list = Brewery.objects.filter(name__icontains=searchString).order_by('name')
+
+    try:
+        str(Style.objects.filter(name__icontains=searchString).order_by(orderByField).query)
+        style_list=Style.objects.filter(name__icontains=searchString).order_by(orderByField)
+    except FieldError:
+        style_list=Style.objects.filter(name__icontains=searchString).order_by('name')
+
+    paginator = Paginator(beer_list, 20) #Show 20 beers per page
+    page = request.GET.get('page')
+    try:
+        beers = paginator.page(page)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        beers = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver last page of results.
+        beers = paginator.page(paginator.num_pages) 
+
+
+    paginator2 = Paginator(brewery_list, 20) #Show 20 beers per page
+    page2 = request.GET.get('page')
+    try:
+        breweries = paginator2.page(page2)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        breweries = paginator2.page(1)
+    except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver last page of results.
+        breweries = paginator2.page(paginator2.num_pages) 
+
+
+
+    paginator3 = Paginator(style_list, 20) #Show 20 beers per page
+    page3 = request.GET.get('page')
+    try:
+        styles = paginator3.page(page3)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        styles = paginator3.page(1)
+    except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver last page of results.
+        styles = paginator3.page(paginator3.num_pages) 
+
+    return render(request, 'tracker/searchResults.html',{'beer_list':beers,'brewery_list':breweries,'style_list':styles}, context_instance=RequestContext(request))
 
 def beerDetail(request, beer_id):
     beer = get_object_or_404(Beer, pk=beer_id)

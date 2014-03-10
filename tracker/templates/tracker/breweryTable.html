@@ -1,0 +1,30 @@
+{% load beer_tags %}
+<div class="row">
+  <div class="large-12 columns">
+        <table style="width:100%">
+        <thead>
+        <tr>
+          <th style="width:35%"><a href="?order_by={% ifequal orderBy 'name' %}-{% endifequal %}name">Brewery</a></th>
+          <th style="width:25%"><a href="?order_by={% ifequal orderBy 'city' %}-{% endifequal %}city">City</a></th>
+          <th style="width:10%"><a href="?order_by={% ifequal orderBy 'state' %}-{% endifequal %}state">State</a></th>
+          <th style="width:15%"><a href="?order_by={% ifequal orderBy 'country' %}-{% endifequal %}country">Country</a></th>
+          <th style="width:10%"><a href="?order_by={% ifequal orderBy 'website' %}-{% endifequal %}website">Website</a></th>
+          <th style="width:5%"><a href="?order_by={% ifequal orderBy 'beer_count' %}-{% endifequal %}beer_count">Beers</a></th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for brewery in breweries %}
+        <tr>
+          <td><a href="/tracker/brewery/{{ brewery.id }}/">{{ brewery.name }}</a></td>
+          <td>{% if brewery.city %}{{ brewery.city }}{% endif %}</a></td>
+          <td>{% if brewery.state %}{{ brewery.state }}{% endif %}</td>
+          <td>{% if brewery.country %}{{ brewery.country }}{% endif %}</td>
+          <td>{% if brewery.website %}{{ brewery.website }}{% endif %}</td>
+          <td>{{ brewery.beer_set.count }}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+        </table>
+        {% paginateNumbers breweries orderBy=orderBy %}
+    </div>
+</div>

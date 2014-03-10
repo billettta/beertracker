@@ -47,10 +47,10 @@
       <li class="has-form">
         <div class="row collapse">
           <div class="large-8 small-9 columns">
-            <input type="text" placeholder="Find Stuff">
+            <input type="text" placeholder="Find Stuff" id='searchText'>
           </div>
           <div class="large-4 small-3 columns">
-            <a href="#" class="alert button expand">Search</a>
+            <a href="/tracker/search/" class="alert button expand" id='searchLink'>Search</a>
           </div>
         </div>
      </li>
@@ -100,6 +100,15 @@
     {% endblock foundation_js %}
 
     {# Custom JS #}
+    <script>
+        $(document).ready(function() {
+            $('#searchLink').click(function(event) {
+                event.preventDefault();
+                linkText = $(this).attr('href') + '?searchString=' + $('#searchText').val();
+                window.location = linkText;
+            });
+        });
+    </script>
     {% block body_js %}{% endblock body_js %}
 
     {# Init Foundation #}
