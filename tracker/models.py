@@ -71,6 +71,7 @@ class Quote(models.Model):
 class Team(models.Model):
     members = models.ManyToManyField(User)
     name = models.CharField(max_length=250,blank=True)
+    picture = models.ImageField(upload_to='shots',blank=True)
     description = models.TextField(blank=True)
 
 class RatingForm(ModelForm):
