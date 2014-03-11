@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404, render_to_response, redirect
 from django.http import HttpResponse
-from tracker.models import Beer,Rating,RatingForm,NewUserForm,Brewery,Style
+from tracker.models import Beer,Rating,RatingForm,NewUserForm,Brewery,Style,NewTasterForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.template import RequestContext
@@ -10,6 +10,7 @@ from django.db.models import Avg, Max, Count
 from django.contrib.auth.decorators import user_passes_test
 from django.core.exceptions import FieldError
 from django.contrib import messages 
+import sys
 
 def index(request):
     beerCount = Beer.objects.count()
@@ -280,17 +281,27 @@ def advocate(request):
 def register(request):    
     if request.method == 'POST':
         uf = NewUserForm(request.POST)
-        if uf.is_valid():
-            user = uf.save()
-            new_user = authenticate(username=request.POST['username'],
-                                    password=request.POST['password'])
-            login(request, new_user)
-            return redirect(request.GET.get('next', '/tracker/profile/'))
+        tf = NewTasterForm(request.POST, request.FILES)
+        if uf.is_valid() and tf.is_valid():
+            try:
+                user = uf.save()
+                taster = tf.save(commit=False)
+                taster.user = user
+                taster.save()
+                new_user = authenticate(username=request.POST['username'],
+                                        password=request.POST['password'])
+                login(request, new_user)
+                return redirect(request.GET.get('next', '/tracker/profile/'))
+            except Exception, e:
+                User.objects.filter(id=user.id).delete()
+                messages.warning(request, "Exception occured: " + str(e))
+                return render(request, 'tracker/register.html', { 'form': uf, 'tasterForm': tf } )
         else:
-            return render(request, 'tracker/register.html', { 'form': uf } )
+            return render(request, 'tracker/register.html', { 'form': uf, 'tasterForm': tf } )
     else:
         form = NewUserForm();
-        return render(request, 'tracker/register.html', { 'form': form } )
+        tasterForm = NewTasterForm();
+        return render(request, 'tracker/register.html', { 'form': form, 'tasterForm': tasterForm } )
 
 def logout_page(request):
     logout(request)

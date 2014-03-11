@@ -17,7 +17,7 @@
     <table style="width:100%;table-layout:fixed;">
       <tbody>
         <tr>
-          <td style="width:35%"><b>Reviewer:</b> {% if rating.taster.nickName %}{{ rating.taster.nickName }}{% else %}{{ rating.user.username }}{% endif %}</td>
+          <td style="width:35%"><b>Reviewer:</b> <a href="/tracker/profile/{{ rating.user.id }}">{% if rating.taster.nickName %}{{ rating.taster.nickName }}{% else %}{{ rating.user.username }}{% endif %}</a></td>
           <td style="width:20%"><b>Flavor:</b> {{ rating.overallRating }}</td>
           <td style="width:20%"><b>Volume:</b> {{ rating.volumeRating }}</td>
           <td style="width:25%"><b>Date:</b> {{ rating.date }}</td>

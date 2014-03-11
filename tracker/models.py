@@ -97,4 +97,9 @@ class NewUserForm(ModelForm):
             user.save()
         return user
 
+class NewTasterForm(ModelForm):
+    class Meta:
+        model = Taster
+        fields = ['nickName', 'description', 'picture']
+        
 #additional objects: team ?
