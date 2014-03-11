@@ -1,4 +1,5 @@
 {% load static %}
+
 <!doctype html>
 <html class="no-js" lang="en">
 <head>
@@ -67,6 +68,13 @@
 </div>
     {# Main content goes here #}
     {% block base_body %}{% endblock base_body %}
+        <div id="errorModal" class="reveal-modal" data-reveal>
+          <h2>Uh Oh!</h2>
+          <p class="lead">There was an error loading you data.</p>
+          <p id="errorText"></p>
+          <a class="close-reveal-modal">&#215;</a>
+        </div>
+
         <footer class="row">
         <div class="large-12 columns"><hr />
             <div class="row">
@@ -88,7 +96,7 @@
         </div>
       </footer>
 
-
+    
     {# Override if you need another version of jQuery #}
     {% block foundation_jquery %}
     <script src="{% static 'resources/js/vendor/jquery.js' %}"></script>
@@ -104,12 +112,49 @@
         $(document).ready(function() {
             $('#searchLink').click(function(event) {
                 event.preventDefault();
-                linkText = $(this).attr('href') + '?searchString=' + $('#searchText').val();
+                linkText = $(this).attr('href') + $('#searchText').val() + '/';
                 window.location = linkText;
             });
         });
     </script>
-    {% block body_js %}{% endblock body_js %}
+
+
+    {% block body_js %}
+    <script>
+        $(document).on( "click", ".tableSortLink, .paginatorLink", function(event) {
+            event.preventDefault();
+            var clickedLink = $(this);
+            var ajaxAnchor = clickedLink.closest('.ajaxAnchor');
+            var ajaxLoadDiv = clickedLink.closest('.ajaxLoadDiv');
+            var divID = ajaxLoadDiv.attr('id');
+            if( ajaxLoadDiv.length)
+            {
+              $.ajax({
+                   url: clickedLink.attr('href'),
+                   type: "GET",
+                   data: { panelID : divID },
+                   success: function (data) {
+                        if (clickedLink.hasClass('paginatorLink'))
+                        {
+                            var topBarHeight = $('.top-bar').outerHeight(true);
+                            $(window).scrollTop(ajaxAnchor.offset().top - topBarHeight);
+                        }                
+                        ajaxLoadDiv.html(data);
+                   },
+                   error: function(xhr, ajaxOptions, thrownError){
+                        $('#errorText').text(thrownError);
+                        $('#errorModal').foundation('reveal', 'open');
+                   },
+                   timeout : 15000
+              });
+            }
+            else
+            {
+                window.location = clickedLink.attr('href');
+            }
+        });
+    </script>
+    {% endblock body_js %}
 
     {# Init Foundation #}
     {% block foundation_js_init %}

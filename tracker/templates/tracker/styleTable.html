@@ -1,14 +1,15 @@
 {% load beer_tags %}
+{% load humanize %}
 <div class="row">
   <div class="large-12 columns">
-        <table style="width:100%">
+        <table style="width:100%;table-layout:fixed;">
         <thead>
         <tr>
-          <th style="width:30%"><a href="?order_by={% ifequal orderBy 'name' %}-{% endifequal %}name">Style</a></th>
-          <th style="width:5%"><a href="?order_by={% ifequal orderBy 'lowabv' %}-{% endifequal %}lowabv">Low ABV</a></th>
-          <th style="width:5%"><a href="?order_by={% ifequal orderBy 'highabv' %}-{% endifequal %}highabv">High ABV</a></th>
-          <th style="width:5%"><a href="?order_by={% ifequal orderBy 'beer_count' %}-{% endifequal %}beer_count">Beers</a></th>
-          <th style="width:55%"><a href="?order_by={% ifequal orderBy 'description' %}-{% endifequal %}description">Description</a></th>
+          <th style="width:30%"><a href="?order_by={% if request.GET.order_by %}{% ifequal request.GET.order_by 'name' %}-{% endifequal %}{% else %}-{% endif %}name" class='tableSortLink'>Style</a></th>
+          <th style="width:5%"><a href="?order_by={% ifequal request.GET.order_by 'lowabv' %}-{% endifequal %}lowabv" class='tableSortLink'>Low ABV</a></th>
+          <th style="width:5%"><a href="?order_by={% ifequal request.GET.order_by 'highabv' %}-{% endifequal %}highabv" class='tableSortLink'>High ABV</a></th>
+          <th style="width:5%"><a href="?order_by={% ifequal request.GET.order_by 'beer_count' %}-{% endifequal %}beer_count" class='tableSortLink'>Beers</a></th>
+          <th style="width:55%"><a href="?order_by={% ifequal request.GET.order_by 'description' %}-{% endifequal %}description" class='tableSortLink'>Description</a></th>
         </tr>
         </thead>
         <tbody>
@@ -17,12 +18,13 @@
           <td><a href="/tracker/style/{{ style.id }}/">{{ style.name }}</a></td>
           <td>{% if style.lowabv %}{{ style.lowabv }}{% endif %}</a></td>
           <td>{% if style.highabv %}{{ style.highabv }}{% endif %}</td>
-          <td>{{ style.beer_set.count }}</td>
+          <td>{{ style.beer_count|intcomma }}</td>
           <td>{% if style.description %}{{ style.description }}{% endif %}</td>
         </tr>
         {% endfor %}
         </tbody>
         </table>
-        {% paginateNumbers styles orderBy=orderBy %}
+        {% paginateNumbers styles orderBy=request.GET.order_by defaultOrderBy='name'%}
     </div>
 </div>
+

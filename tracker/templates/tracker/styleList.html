@@ -1,11 +1,20 @@
 {% extends "tracker/base.html" %}
 {% load static %}
 {% load beer_tags %}
+{% load humanize %}
 {% block title %}Style List{% endblock %}
 {% block base_body %}
 {% block content %}
 <br/>
-{% styleTable styles orderBy=request.GET.order_by defaultOrderBy='name' %}
-<br/><br/>
+<div class="row">
+  <div class="large-12 columns">
+    <div class="panel">
+      <h3>Styles<small> - {{ styles.paginator.count|intcomma }} and counting!</small></h3>
+    </div>
+  </div>
+</div>
+<div class="ajaxLoadDiv ajaxAnchor">
+    {% include "tracker/styleTable.html" %}
+</div>
 {% endblock content %}
 {% endblock base_body %}

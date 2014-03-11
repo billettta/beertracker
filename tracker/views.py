@@ -17,87 +17,93 @@ def index(request):
     ratingCount = Rating.objects.count()
     return render(request, 'tracker/welcome.html',{'beerCount':beerCount,'breweryCount':breweryCount,'ratingCount':ratingCount}, context_instance=RequestContext(request))
 
-def search(request):
-    searchString = request.GET.get('searchString', '')
+def search(request, searchString):
     orderByField = request.GET.get('order_by', 'name')
+    panelID = request.GET.get('panelID', 'all')
 
     if(len(searchString) < 3):
         messages.warning(request,'Search string must be at least three characters')
         return render(request, 'tracker/searchResults.html', context_instance=RequestContext(request))
 
-    try:
-        str(Beer.objects.filter(name__icontains=searchString).order_by(orderByField).query)
-        beer_list = Beer.objects.filter(name__icontains=searchString).order_by(orderByField)
-    except FieldError:
-        beer_list = Beer.objects.filter(name__icontains=searchString).order_by('name')
+    beers = None
+    breweries = None
+    styles = None
+    
+    if panelID == 'beerPanel' or panelID == 'all':
+        beer_list = Beer.objects.filter(name__icontains=searchString).annotate(avg_rating=Avg('rating__overallRating'), avg_volume=Avg('rating__volumeRating')).order_by(orderByField)
+        paginator = Paginator(beer_list, 20) #Show 20 beers per page
+        page = request.GET.get('page')
+        try:
+            beers = paginator.page(page)
+        except PageNotAnInteger:
+            # If page is not an integer, deliver first page.
+            beers = paginator.page(1)
+        except EmptyPage:
+            # If page is out of range (e.g. 9999), deliver last page of results.
+            beers = paginator.page(paginator.num_pages) 
 
-    try:
-        str(Brewery.objects.filter(name__icontains=searchString).order_by(orderByField).query)
-        brewery_list = Brewery.objects.filter(name__icontains=searchString).order_by(orderByField)
-    except:
-        brewery_list = Brewery.objects.filter(name__icontains=searchString).order_by('name')
+    if panelID == 'breweryPanel' or panelID == 'all':
+        brewery_list = Brewery.objects.filter(name__icontains=searchString).annotate(beer_count=Count('beer')).order_by(orderByField)
+        paginator2 = Paginator(brewery_list, 20) #Show 20 beers per page
+        page2 = request.GET.get('page')
+        try:
+            breweries = paginator2.page(page2)
+        except PageNotAnInteger:
+            # If page is not an integer, deliver first page.
+            breweries = paginator2.page(1)
+        except EmptyPage:
+            # If page is out of range (e.g. 9999), deliver last page of results.
+            breweries = paginator2.page(paginator2.num_pages) 
 
-    try:
-        str(Style.objects.filter(name__icontains=searchString).order_by(orderByField).query)
-        style_list=Style.objects.filter(name__icontains=searchString).order_by(orderByField)
-    except FieldError:
-        style_list=Style.objects.filter(name__icontains=searchString).order_by('name')
+    if panelID == 'stylePanel' or panelID == 'all':
+        style_list=Style.objects.filter(name__icontains=searchString).annotate(beer_count=Count('beer')).order_by(orderByField)
+        paginator3 = Paginator(style_list, 20) #Show 20 beers per page
+        page3 = request.GET.get('page')
+        try:
+            styles = paginator3.page(page3)
+        except PageNotAnInteger:
+            # If page is not an integer, deliver first page.
+            styles = paginator3.page(1)
+        except EmptyPage:
+            # If page is out of range (e.g. 9999), deliver last page of results.
+            styles = paginator3.page(paginator3.num_pages) 
 
-    paginator = Paginator(beer_list, 20) #Show 20 beers per page
-    page = request.GET.get('page')
-    try:
-        beers = paginator.page(page)
-    except PageNotAnInteger:
-        # If page is not an integer, deliver first page.
-        beers = paginator.page(1)
-    except EmptyPage:
-        # If page is out of range (e.g. 9999), deliver last page of results.
-        beers = paginator.page(paginator.num_pages) 
+    if request.is_ajax():
+        if panelID == 'beerPanel':
+            template = 'tracker/beerTable.html'
+        elif panelID == 'breweryPanel':
+            template = 'tracker/breweryTable.html'
+        elif panelID == 'stylePanel':
+            template = 'tracker/styleTable.html'
+    else:
+        template = 'tracker/searchResults.html'
 
-
-    paginator2 = Paginator(brewery_list, 20) #Show 20 beers per page
-    page2 = request.GET.get('page')
-    try:
-        breweries = paginator2.page(page2)
-    except PageNotAnInteger:
-        # If page is not an integer, deliver first page.
-        breweries = paginator2.page(1)
-    except EmptyPage:
-        # If page is out of range (e.g. 9999), deliver last page of results.
-        breweries = paginator2.page(paginator2.num_pages) 
-
-
-
-    paginator3 = Paginator(style_list, 20) #Show 20 beers per page
-    page3 = request.GET.get('page')
-    try:
-        styles = paginator3.page(page3)
-    except PageNotAnInteger:
-        # If page is not an integer, deliver first page.
-        styles = paginator3.page(1)
-    except EmptyPage:
-        # If page is out of range (e.g. 9999), deliver last page of results.
-        styles = paginator3.page(paginator3.num_pages) 
-
-    return render(request, 'tracker/searchResults.html',{'beer_list':beers,'brewery_list':breweries,'style_list':styles}, context_instance=RequestContext(request))
+    return render(request, template, {'beers':beers,'breweries':breweries,'styles':styles}, context_instance=RequestContext(request))
 
 def beerDetail(request, beer_id):
-    beer = get_object_or_404(Beer, pk=beer_id)
-    form = RatingForm()
+    beer = None
+    form = None
 
-    if request.method == 'POST':
-        rf = RatingForm(request.POST, request.FILES)
-        if rf.is_valid():
-            ratingForm = rf.save(commit=False)
-            ratingForm.user = request.user
-            ratingForm.beer = beer
-            ratingForm.save()
-            messages.success(request, 'Rating submitted successfully!')
-        else:
-            form = rf
-
+    if request.is_ajax():
+        template = 'tracker/beerRatingTable.html'
+    else:
+        template = 'tracker/beerDetail.html'
+        beer = get_object_or_404(Beer, pk=beer_id)
+        if request.method == 'POST':
+            rf = RatingForm(request.POST, request.FILES)
+            if rf.is_valid():
+                ratingForm = rf.save(commit=False)
+                ratingForm.user = request.user
+                ratingForm.beer = beer
+                ratingForm.save()
+                messages.success(request, 'Rating submitted successfully!')
+            else:
+                form = rf
+        
+        beer = get_object_or_404(Beer.objects.all().annotate(avg_rating=Avg('rating__overallRating'), avg_volume=Avg('rating__volumeRating')), pk=beer_id)
+        form = RatingForm()
+    
     orderByField = request.GET.get('order_by', '-date')
-
     if request.user.is_authenticated():
         rating_list = Rating.objects.filter(beer=beer_id).extra(select={'userOrder': '''CASE WHEN user_id = ''' + str(request.user.id) + ''' THEN 0 ELSE 1 END'''}).extra(order_by=['userOrder', orderByField, '-id'])
     else:
@@ -115,7 +121,8 @@ def beerDetail(request, beer_id):
         ratings = paginator.page(paginator.num_pages)
 
 
-    return render(request, 'tracker/beerDetail.html',{'beer':beer,'rating_list':ratings,'form':form}, context_instance=RequestContext(request))
+
+    return render(request, template, {'beer':beer,'rating_list':ratings,'form':form}, context_instance=RequestContext(request))
 
 def breweryDetail(request, brewery_id):
     brewery = get_object_or_404(Brewery, pk=brewery_id)
@@ -131,14 +138,26 @@ def breweryDetail(request, brewery_id):
     except EmptyPage:
         # If page is out of range (e.g. 9999), deliver last page of results.
         beers = paginator.page(paginator.num_pages)
-    return render(request, 'tracker/breweryDetail.html',{'brewery':brewery,'beers':beers }, context_instance=RequestContext(request))
+
+    if request.is_ajax():
+        template = 'tracker/beerTable.html'
+    else:
+        template = 'tracker/breweryDetail.html'
+
+    return render(request, template,{'brewery':brewery,'beers':beers }, context_instance=RequestContext(request))
 
 def ratingDetail(request, rating_id):
     rating = get_object_or_404(Rating, pk=rating_id)
     return render(request, 'tracker/ratingDetail.html',{'rating',rating})
 
 def styleDetail(request, style_id):
-    style = get_object_or_404(Style, pk=style_id)
+    style = None
+    if request.is_ajax():
+        template = 'tracker/beerTable.html'
+    else:
+        template = 'tracker/styleDetail.html'
+        style = get_object_or_404(Style, pk=style_id)
+
     orderByField = request.GET.get('order_by', 'name')
     beer_list = Beer.objects.filter(style=style_id).annotate(avg_rating=Avg('rating__overallRating'), avg_volume=Avg('rating__volumeRating')).order_by(orderByField)
     paginator = Paginator(beer_list, 20) #Show 20 beers per page
@@ -151,14 +170,20 @@ def styleDetail(request, style_id):
     except EmptyPage:
         # If page is out of range (e.g. 9999), deliver last page of results.
         beers = paginator.page(paginator.num_pages)
-    return render(request, 'tracker/styleDetail.html',{'style':style, 'beers':beers}, context_instance=RequestContext(request))
+    return render(request, template, {'style':style, 'beers':beers}, context_instance=RequestContext(request))
 
 @login_required(login_url='/tracker/login/')
 def myProfile(request):
     return redirect(profile, request.user.id )
 
 def profile(request, user_id):
-    user = get_object_or_404(User, pk=user_id)
+    user = None
+    if request.is_ajax():
+        template = 'tracker/userRatingTable.html'
+    else:
+        template = 'tracker/profile.html'
+        user = get_object_or_404(User, pk=user_id)
+
     orderByField = request.GET.get('order_by', '-date')
     rating_list = Rating.objects.filter(user_id=user_id).order_by(orderByField)
     paginator = Paginator(rating_list, 10) #Show 10 ratings per page
@@ -172,8 +197,7 @@ def profile(request, user_id):
         # If page is out of range (e.g. 9999), deliver last page of results.
         ratings = paginator.page(paginator.num_pages)
 
-
-    return render(request, 'tracker/profile.html',{ 'userProfile': user, 'rating_list':ratings }, context_instance=RequestContext(request))
+    return render(request, template, { 'userProfile': user, 'rating_list':ratings }, context_instance=RequestContext(request))
 
 
 #do we actually need a style list view ?
@@ -191,7 +215,13 @@ def styleList(request):
     except EmptyPage:
         # If page is out of range (e.g. 9999), deliver last page of results.
         styles = paginator.page(paginator.num_pages)
-    return render(request, 'tracker/styleList.html',{'styles':styles }, context_instance=RequestContext(request))
+
+    if request.is_ajax():
+        template = 'tracker/styleTable.html'
+    else:
+        template = 'tracker/styleList.html'
+
+    return render(request, template, {'styles':styles }, context_instance=RequestContext(request))
 
 def breweryList(request):
     orderByField = request.GET.get('order_by', 'name')
@@ -206,7 +236,13 @@ def breweryList(request):
     except EmptyPage:
         # If page is out of range (e.g. 9999), deliver last page of results.
         breweries = paginator.page(paginator.num_pages)
-    return render(request, 'tracker/breweryList.html',{'breweries':breweries }, context_instance=RequestContext(request))
+
+    if request.is_ajax():
+        template = 'tracker/breweryTable.html'
+    else:
+        template = 'tracker/breweryList.html'
+
+    return render(request, template, {'breweries':breweries }, context_instance=RequestContext(request))
 
 def ratingList(request):
     return HttpResponse("You're looking at beer %s.")
@@ -224,7 +260,13 @@ def beerList(request):
     except EmptyPage:
         # If page is out of range (e.g. 9999), deliver last page of results.
         beers = paginator.page(paginator.num_pages)
-    return render(request, 'tracker/beerList.html',{'beers':beers }, context_instance=RequestContext(request))
+
+    if request.is_ajax():
+        template = 'tracker/beerTable.html'
+    else:
+        template = 'tracker/beerList.html'
+
+    return render(request, template, {'beers':beers }, context_instance=RequestContext(request))
 
 @user_passes_test(lambda u: u.is_superuser, login_url='/tracker/login/')
 def advocate(request):

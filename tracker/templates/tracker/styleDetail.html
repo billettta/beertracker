@@ -34,7 +34,9 @@
     </div>
   </div>  
 </div>
-{% beerTable beers orderBy=request.GET.order_by defaultOrderBy='name' %}
+<div class="ajaxAnchor ajaxLoadDiv">
+    {% include "tracker/beerTable.html" %}
+</div>
 <br/><br/>
 {% endblock content %}
 {% endblock base_body %}

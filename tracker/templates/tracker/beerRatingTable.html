@@ -1,0 +1,41 @@
+{% load beer_tags %}
+
+{% if messages %}
+    <div data-alert class="alert-box success radius">
+        {% for message in messages %} 
+          {{ message }} 
+        {% endfor %} 
+        <a href="#" class="close">&times;</a>
+    </div> 
+{% endif %} 
+{% for rating in rating_list %}
+<div class="row">
+  <div class="large-12 columns">
+    {% if rating.user == request.user %}
+        <div class="panel callout radius">
+    {% endif %}
+    <table style="width:100%;table-layout:fixed;">
+      <tbody>
+        <tr>
+          <td style="width:35%"><b>Reviewer:</b> {% if rating.taster.nickName %}{{ rating.taster.nickName }}{% else %}{{ rating.user.username }}{% endif %}</td>
+          <td style="width:20%"><b>Flavor:</b> {{ rating.overallRating }}</td>
+          <td style="width:20%"><b>Volume:</b> {{ rating.volumeRating }}</td>
+          <td style="width:25%"><b>Date:</b> {{ rating.date }}</td>
+        </tr>
+        <tr>
+            {% if rating.picture %}
+                <td colspan="3" style="word-break:break-all">{{ rating.notes }}</td>
+                <td colspan="1"><img src ="{{ rating.picture.url }}"></td>    
+            {% else %}
+                <td colspan="4" style="word-break:break-all">{{ rating.notes }}</td>           
+            {% endif %}
+        </tr>
+      </tbody>
+    </table>   
+    {% if rating.user == request.user %}
+        </div>
+    {% endif %}  
+  </div>
+</div>
+{% endfor %}
+{% paginateNumbers rating_list orderBy=request.GET.order_by defaultOrderBy='-date' %}

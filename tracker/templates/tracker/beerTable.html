@@ -1,15 +1,15 @@
 {% load beer_tags %}
 <div class="row">
   <div class="large-12 columns">
-        <table style="width:100%">
+        <table style="width:100%;table-layout:fixed;">
         <thead>
         <tr>
-          <th style="width:34%"><a href="?order_by={% ifequal orderBy 'name' %}-{% endifequal %}name">Beer</a></th>
-          <th style="width:33%"><a href="?order_by={% ifequal orderBy 'style__name' %}-{% endifequal %}style__name">Style</a></th>
-          <th style="width:8%"><a href="?order_by={% ifequal orderBy 'abv' %}-{% endifequal %}abv">ABV</a></th>
-          <th style="width:8%"><a href="?order_by={% ifequal orderBy 'avg_rating' %}-{% endifequal %}avg_rating">Overall Rating</a></th>
-          <th style="width:8%"><a href="?order_by={% ifequal orderBy 'avg_volume' %}-{% endifequal %}avg_volume">Volume Rating</a></th>
-          <th style="width:8%"><a href="?order_by={% ifequal orderBy 'retired' %}-{% endifequal %}retired">Retired</a></th>
+          <th style="width:34%"><a href="?order_by={% if request.GET.order_by %}{% ifequal request.GET.order_by 'name' %}-{% endifequal %}{% else %}-{% endif %}name" class='tableSortLink'>Beer</a></th>
+          <th style="width:33%"><a href="?order_by={% ifequal request.GET.order_by 'style__name' %}-{% endifequal %}style__name" class='tableSortLink'>Style</a></th>
+          <th style="width:8%"><a href="?order_by={% ifequal request.GET.order_by 'abv' %}-{% endifequal %}abv" class='tableSortLink'>ABV</a></th>
+          <th style="width:8%"><a href="?order_by={% ifequal request.GET.order_by 'avg_rating' %}-{% endifequal %}avg_rating" class='tableSortLink'>Overall Rating</a></th>
+          <th style="width:8%"><a href="?order_by={% ifequal request.GET.order_by 'avg_volume' %}-{% endifequal %}avg_volume" class='tableSortLink'>Volume Rating</a></th>
+          <th style="width:8%"><a href="?order_by={% ifequal request.GET.order_by 'retired' %}-{% endifequal %}retired" class='tableSortLink'>Retired</a></th>
         </tr>
         </thead>
         <tbody>
@@ -18,13 +18,14 @@
           <td><a href="/tracker/beer/{{ beer.id }}/">{{ beer.name }}</a></td>
           <td><a href="/tracker/style/{{ beer.style.id }}">{{ beer.style.name}}</a></td>
           <td>{% if beer.abv %}{{ beer.abv }}{% else %}?{% endif %}</td>
-          <td>{{ beer.avg_rating }}</td>
-          <td>{{ beer.avg_volume }}</td>
+          <td>{{ beer.avg_rating|floatformat:"1" }}</td>
+          <td>{{ beer.avg_volume|floatformat:"1" }}</td>
           <td>{{ beer.retired }}</td>
         </tr>
         {% endfor %}
         </tbody>
         </table>
-        {% paginateNumbers beers orderBy=orderBy %}
+        {% paginateNumbers beers orderBy=request.GET.order_by defaultOrderBy='name' %}
     </div>
 </div>
+
