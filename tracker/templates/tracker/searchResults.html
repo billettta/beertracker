@@ -70,6 +70,16 @@
 <br/>
 <div class="row">
   <div class="large-12 columns">
+    {% if messages %}
+        <div data-alert class="alert-box warning">
+            {% for message in messages %}
+                {% ifequal message.tags "warning" %}
+                    {{ message }} 
+                {% endifequal %}
+            {% endfor %} 
+            <a href="#" class="close">&times;</a>
+        </div> 
+    {% endif %} 
     <dl class="tabs" data-tab>
       <dd><a href="#beerPanel">Beers ({{ beer_list.paginator.count  }})</a></dd>
       <dd><a href="#breweryPanel">Breweries ({{ brewery_list.paginator.count }})</a></dd>

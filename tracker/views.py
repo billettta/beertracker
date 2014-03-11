@@ -9,6 +9,7 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import Avg, Max, Count
 from django.contrib.auth.decorators import user_passes_test
 from django.core.exceptions import FieldError
+from django.contrib import messages 
 
 def index(request):
     beerCount = Beer.objects.count()
@@ -19,6 +20,10 @@ def index(request):
 def search(request):
     searchString = request.GET.get('searchString', '')
     orderByField = request.GET.get('order_by', 'name')
+
+    if(len(searchString) < 3):
+        messages.warning(request,'Search string must be at least three characters')
+        return render(request, 'tracker/searchResults.html', context_instance=RequestContext(request))
 
     try:
         str(Beer.objects.filter(name__icontains=searchString).order_by(orderByField).query)
@@ -87,11 +92,17 @@ def beerDetail(request, beer_id):
             ratingForm.user = request.user
             ratingForm.beer = beer
             ratingForm.save()
+            messages.success(request, 'Rating submitted successfully!')
         else:
             form = rf
 
     orderByField = request.GET.get('order_by', '-date')
-    rating_list = Rating.objects.filter(beer=beer_id).order_by(orderByField)
+
+    if request.user.is_authenticated():
+        rating_list = Rating.objects.filter(beer=beer_id).extra(select={'userOrder': '''CASE WHEN user_id = ''' + str(request.user.id) + ''' THEN 0 ELSE 1 END'''}).extra(order_by=['userOrder', orderByField, '-id'])
+    else:
+        rating_list = Rating.objects.filter(beer=beer_id).order_by(orderByField,'-id')
+
     paginator = Paginator(rating_list, 10) #Show 10 ratings per page
     page = request.GET.get('page')
     try:
