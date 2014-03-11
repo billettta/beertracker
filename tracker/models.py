@@ -50,6 +50,7 @@ class Taster(models.Model):
     description = models.TextField(blank=True)
     picture = models.ImageField(upload_to='tastershots',blank=True)
     team = models.ForeignKey(Team)
+    nickName = models.CharField(max_length=250,blank=True)
     def __unicode__(self):
         return self.nickName
 
@@ -104,3 +105,8 @@ class NewUserForm(ModelForm):
             user.save()
         return user
 
+class NewTasterForm(ModelForm):
+    class Meta:
+        model = Taster
+        fields = ['nickName', 'description', 'picture']
+        

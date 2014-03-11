@@ -6,12 +6,119 @@
 <br/>
 <div class="row">
     <div class="large-12 columns">
+        {% if messages %}
+            <div data-alert class="alert-box warning">
+                {% for message in messages %}
+                    {% ifequal message.tags "warning" %}
+                        {{ message }} 
+                    {% endifequal %}
+                {% endfor %} 
+                <a href="#" class="close">&times;</a>
+            </div> 
+        {% endif %}
         <div class="panel">
-	        <form action="" method="post" {% if form.is_multipart %}enctype="multipart/form-data"{% endif %}>
+            <form action="" method="post" {% if form.is_multipart or tasterForm.is_multipart %}enctype="multipart/form-data"{% endif %}>
                 {% csrf_token %}
-		        {{ form.as_p }}
-		        <input type="submit" class="small button" value="Register" />
-	        </form>
+                <div class="row">
+                 <div class="large-4 columns">
+                   <p><label for="id_username">Username:</label> 
+                   {{ form.username }}
+                    {% if form.username.errors %}
+                        <div data-alert class="alert-box warning radius" style="vertical-align:middle;padding-top:5px;padding-bottom:5px">
+                            {{ form.username.errors }}
+                            <a href="#" class="close">&times;</a>
+                        </div>
+                    {% endif %}
+                    </p>
+                 </div>
+                 <div class="large-4 columns">
+                   <p><label for="id_password">Password:</label> 
+                   {{ form.password }}
+                    {% if form.password.errors %}
+                        <div data-alert class="alert-box warning radius" style="vertical-align:middle;padding-top:5px;padding-bottom:5px">
+                            {{ form.password.errors }}
+                            <a href="#" class="close">&times;</a>
+                        </div>
+                    {% endif %}
+                    </p>
+                 </div>
+                 <div class="large-4 columns">
+                   <p><label for="id_email">Email:</label> 
+                   {{ form.email }}
+                    {% if form.email.errors %}
+                        <div data-alert class="alert-box warning radius" style="vertical-align:middle;padding-top:5px;padding-bottom:5px">
+                            {{ form.email.errors }}
+                            <a href="#" class="close">&times;</a>
+                        </div>
+                    {% endif %}
+                    </p>
+                 </div>
+                </div>
+                <div class="row">
+                 <div class="large-4 columns">
+                   <p><label for="id_first_name">First Name:</label> 
+                   {{ form.first_name }}
+                    {% if form.first_name.errors %}
+                        <div data-alert class="alert-box warning radius" style="vertical-align:middle;padding-top:5px;padding-bottom:5px">
+                            {{ form.first_name.errors }}
+                            <a href="#" class="close">&times;</a>
+                        </div>
+                    {% endif %}
+                    </p>
+                 </div>
+                 <div class="large-4 columns">
+                   <p><label for="id_nickName">Nick Name:</label> 
+                   {{ tasterForm.nickName }}
+                    {% if tasterForm.nickName.errors %}
+                        <div data-alert class="alert-box warning radius" style="vertical-align:middle;padding-top:5px;padding-bottom:5px">
+                            {{ tasterForm.nickName.errors }}
+                            <a href="#" class="close">&times;</a>
+                        </div>
+                    {% endif %}
+                    </p>
+                 </div>
+                 <div class="large-4 columns">
+                   <p><label for="id_last_name">Last Name:</label> 
+                   {{ form.last_name }}
+                    {% if form.last_name.errors %}
+                        <div data-alert class="alert-box warning radius" style="vertical-align:middle;padding-top:5px;padding-bottom:5px">
+                            {{ form.last_name.errors }}
+                            <a href="#" class="close">&times;</a>
+                        </div>
+                    {% endif %}
+                    </p>
+                 </div>
+                </div>
+
+                <div class="row">
+                 <div class="large-12 columns">
+                  <p><label for="id_description">Description:</label>
+                  {{ tasterForm.description }}
+                    {% if tasterForm.description.errors %}
+                        <div data-alert class="alert-box warning radius" style="vertical-align:middle;padding-top:5px;padding-bottom:5px">
+                            {{ tasterForm.description.errors }}
+                            <a href="#" class="close">&times;</a>
+                        </div>
+                    {% endif %}
+                    </p>
+                 </div>
+                </div>
+                <div class="row">
+                 <div class="large-9 columns">
+                   <label for="id_picture">Picture:</label> 
+                   <input id="id_picture" name="picture" type="file" />
+                    {% if tasterForm.picture.errors %}
+                        <div data-alert class="alert-box warning radius" style="vertical-align:middle;padding-top:5px;padding-bottom:5px">
+                            {{ tasterForm.picture.errors }}
+                            <a href="#" class="close">&times;</a>
+                        </div>
+                    {% endif %}
+                 </div>
+                 <div class="large-3 columns">
+                   <input type="submit" class="small button" value="Register" style="width:100%"/>
+                 </div>
+                </div>
+            </form>
         </div>
     </div>
 </div>
