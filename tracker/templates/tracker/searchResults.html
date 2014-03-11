@@ -2,69 +2,6 @@
 {% load static %}
 {% load beer_tags %}
 {% block title %}Search{% endblock %}
-{% block head_js %}
-<script src="{% static 'resources/js/vendor/jquery.js' %}"></script>
-<script type="text/javascript">
-    $(document).ready(function(){
-
-
-        var currentLocation = window.location.href;
-        var panelLocation = currentLocation.indexOf("#");
-        if (panelLocation > 0)
-        {
-            var panelID = window.location.hash;
-        }
-        else
-        {
-            var panelID = '#beerPanel';
-        }
-        $('a[href="'+panelID+'"]').closest('dd').addClass('active');
-        $(panelID).addClass('active')
-     
-        setTimeout(function() {
-          if (location.hash) {
-            window.scrollTo(0, 0);
-          }
-        }, 1);
-
-        $('a').click(function(event){
-            event.preventDefault();
-            var link = this.href
-            if(link.indexOf("/tracker/search/") != -1)
-            {
-                searchString = getQueryVariable('searchString');
-                var query = window.location.search.substring(1);
-                var andSign = '';                
-                if(query.indexOf('&'))
-                {
-                    andSign = '&';
-                }                
-                if(searchString && link.indexOf('searchString') == -1)
-                {
-                    link = link.substring(0,link.indexOf("?")+1) + 'searchString=' + searchString + andSign + link.substring(link.indexOf("?") + 1)
-                }
-                if(link.indexOf("#") == -1)
-                {    
-                    link = link + '#' + $('.content.active').attr('id')
-                }
-            }
-            window.location = link
-        });
-
-    });
-
-    function getQueryVariable(variable)
-    {
-           var query = window.location.search.substring(1);
-           var vars = query.split("&");
-           for (var i=0;i<vars.length;i++) {
-                   var pair = vars[i].split("=");
-                   if(pair[0] == variable){return pair[1];}
-           }
-           return(false);
-    }
-</script>
-{% endblock head_js %}
 {% block base_body %}
 {% block content %}
 <br/>
@@ -80,20 +17,20 @@
             <a href="#" class="close">&times;</a>
         </div> 
     {% endif %} 
-    <dl class="tabs" data-tab>
-      <dd><a href="#beerPanel">Beers ({{ beer_list.paginator.count  }})</a></dd>
-      <dd><a href="#breweryPanel">Breweries ({{ brewery_list.paginator.count }})</a></dd>
-      <dd><a href="#stylePanel">Styles ({{ style_list.paginator.count }})</a></dd>
+    <dl class="tabs ajaxAnchor" data-tab>
+      <dd class="active"><a href="#beerPanel">Beers ({{ beers.paginator.count  }})</a></dd>
+      <dd><a href="#breweryPanel">Breweries ({{ breweries.paginator.count }})</a></dd>
+      <dd><a href="#stylePanel">Styles ({{ styles.paginator.count }})</a></dd>
     </dl>
     <div class="tabs-content">
-      <div class="content" id="beerPanel">
-        <p>{% beerTable beer_list orderBy=request.GET.order_by defaultOrderBy='name' %}</p>
+      <div class="content active ajaxLoadDiv" id="beerPanel">
+        {% include "tracker/beerTable.html" %}
       </div>
-      <div class="content" id="breweryPanel">
-        <p>{% breweryTable brewery_list orderBy=request.GET.order_by defaultOrderBy='name' %}</p>
+      <div class="content ajaxLoadDiv" id="breweryPanel">
+        {% include "tracker/breweryTable.html" %}
       </div>
-      <div class="content" id="stylePanel">
-        <p>{% styleTable style_list orderBy=request.GET.order_by defaultOrderBy='name' %}</p>
+      <div class="content ajaxLoadDiv" id="stylePanel">
+        {% include "tracker/styleTable.html" %}
       </div>
     </div>
   </div>

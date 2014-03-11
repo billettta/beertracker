@@ -1,15 +1,16 @@
 {% load beer_tags %}
+{% load humanize %}
 <div class="row">
   <div class="large-12 columns">
-        <table style="width:100%">
+        <table style="width:100%;table-layout:fixed;">
         <thead>
         <tr>
-          <th style="width:35%"><a href="?order_by={% ifequal orderBy 'name' %}-{% endifequal %}name">Brewery</a></th>
-          <th style="width:25%"><a href="?order_by={% ifequal orderBy 'city' %}-{% endifequal %}city">City</a></th>
-          <th style="width:10%"><a href="?order_by={% ifequal orderBy 'state' %}-{% endifequal %}state">State</a></th>
-          <th style="width:15%"><a href="?order_by={% ifequal orderBy 'country' %}-{% endifequal %}country">Country</a></th>
-          <th style="width:10%"><a href="?order_by={% ifequal orderBy 'website' %}-{% endifequal %}website">Website</a></th>
-          <th style="width:5%"><a href="?order_by={% ifequal orderBy 'beer_count' %}-{% endifequal %}beer_count">Beers</a></th>
+          <th style=width:30%"><a href="?order_by={% if request.GET.order_by %}{% ifequal request.GET.order_by 'name' %}-{% endifequal %}{% else %}-{% endif %}name" class='tableSortLink'>Brewery</a></th>
+          <th style="width:20%"><a href="?order_by={% ifequal request.GET.order_by 'city' %}-{% endifequal %}city" class='tableSortLink'>City</a></th>
+          <th style="width:10%"><a href="?order_by={% ifequal request.GET.order_by 'state' %}-{% endifequal %}state" class='tableSortLink'>State</a></th>
+          <th style="width:20%"><a href="?order_by={% ifequal request.GET.order_by 'country' %}-{% endifequal %}country" class='tableSortLink'>Country</a></th>
+          <th style="width:8%"><a href="?order_by={% ifequal request.GET.order_by 'website' %}-{% endifequal %}website" class='tableSortLink'>Website</a></th>
+          <th style="width:7%"><a href="?order_by={% ifequal request.GET.order_by 'beer_count' %}-{% endifequal %}beer_count" class='tableSortLink'>Beers</a></th>
         </tr>
         </thead>
         <tbody>
@@ -19,12 +20,12 @@
           <td>{% if brewery.city %}{{ brewery.city }}{% endif %}</a></td>
           <td>{% if brewery.state %}{{ brewery.state }}{% endif %}</td>
           <td>{% if brewery.country %}{{ brewery.country }}{% endif %}</td>
-          <td>{% if brewery.website %}{{ brewery.website }}{% endif %}</td>
-          <td>{{ brewery.beer_set.count }}</td>
+          <td>{% if brewery.website %}<a href="{{ brewery.website }}">Website</a>{% endif %}</td>
+          <td>{{ brewery.beer_count|intcomma }}</td>
         </tr>
         {% endfor %}
         </tbody>
         </table>
-        {% paginateNumbers breweries orderBy=orderBy %}
+        {% paginateNumbers breweries orderBy=request.GET.order_by defaultOrderBy='name' %}
     </div>
 </div>

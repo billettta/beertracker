@@ -2,9 +2,11 @@
 {% load static %}
 {% load beer_tags %}
 {% block title %}{{ beer.name }}{% endblock %}
-{% block head_js %}
+{% block css %}
 <link rel="stylesheet" type="text/css" href="{% static 'resources/css/jquery-ui-1.10.4.custom.min.css' %}" />
-<script src="{% static 'resources/js/vendor/jquery.js' %}"></script>
+{% endblock %}
+{% block body_js %}
+{{ block.super }}
 <script src="{% static 'resources/js/vendor/jquery-ui-1.10.4.custom.min.js' %}"></script>
  <script>
     jQuery(function($){
@@ -28,7 +30,7 @@
         });
     });
 </script>
-{% endblock head_js %}
+{% endblock body_js %}
 {% block base_body %}
 {% block content %}
 <br/>
@@ -42,11 +44,22 @@
         </div>
 	<div class="large-10 columns end">
 		<div class="row">
-			<div class="large-2 columns">
+			<div class="large-3 columns">
 			  ABV: {{ beer.abv }} %
 			</div>
-			<div class="large-8 columns end">
+			<div class="large-7 columns end">
 			  Style: <a href="/tracker/style/{{ beer.style.id }}">{{ beer.style.name }}</a>
+			</div>
+		</div>
+		<div class="row">
+			<div class="large-3 columns">
+			  Overall Rating: {{ beer.avg_rating|floatformat:"1" }}
+			</div>
+			<div class="large-3 columns end">
+			  Volume Rating: {{ beer.avg_volume|floatformat:"1" }}
+			</div>
+			<div class="large-4 columns end">
+			  Drunk Rating: {{ beer.avg_volume|multiply:beer.abv|divide:10|floatformat:"1" }}
 			</div>
 		</div>
 		<div class="row">
@@ -84,51 +97,55 @@
            <div class="row">
              <div class="large-4 columns">
                <p><label for="id_date">Date:</label> 
-               {{ form.date }}</p>
+               {{ form.date }}
                 {% if form.date.errors %}
                     <div data-alert class="alert-box warning radius" style="max-height:35px;vertical-align:middle;padding-top:5px;padding-bottom:5px">
                         {{ form.date.errors }}
                         <a href="#" class="close">&times;</a>
                     </div>
                 {% endif %}
+                </p>
              </div>
              <div class="large-4 columns">
                <p><label for="id_overallRating">Overall Rating:</label> 
-               {{ form.overallRating }}</p>
+               {{ form.overallRating }}
                 {% if form.overallRating.errors %}
                     <div data-alert class="alert-box warning radius" style="max-height:35px;vertical-align:middle;padding-top:5px;padding-bottom:5px">
                         {{ form.overallRating.errors }}
                         <a href="#" class="close">&times;</a>
                     </div>
                 {% endif %}
+                </p>
              </div>
              <div class="large-4 columns">
                <p><label for="id_volumeRating">Volume Rating:</label> 
-               {{ form.volumeRating }}</p>
+               {{ form.volumeRating }}
                 {% if form.volumeRating.errors %}
                     <div data-alert class="alert-box warning radius" style="max-height:35px;vertical-align:middle;padding-top:5px;padding-bottom:5px">
                         {{ form.volumeRating.errors }}
                         <a href="#" class="close">&times;</a>
                     </div>
                 {% endif %}
+                </p>
              </div>
            </div>
            <div class="row">
              <div class="large-12 columns">
-              <label for="id_notes">Notes:</label>
-              {{ form.notes }}</p>
+              <p><label for="id_notes">Notes:</label>
+              {{ form.notes }}
                 {% if form.notes.errors %}
                     <div data-alert class="alert-box warning radius" style="max-height:35px;vertical-align:middle;padding-top:5px;padding-bottom:5px">
                         {{ form.notes.errors }}
                         <a href="#" class="close">&times;</a>
                     </div>
                 {% endif %}
+                </p>
              </div>
            </div>
            <div class="row">
              <div class="large-9 columns">
-               <p><label for="id_date">Picture:</label> 
-               <input id="id_picture" name="picture" type="file" /></p>
+               <label for="id_date">Picture:</label> 
+               <input id="id_picture" name="picture" type="file" />
                 {% if form.picture.errors %}
                     <div data-alert class="alert-box warning radius" style="max-height:35px;vertical-align:middle;padding-top:5px;padding-bottom:5px">
                         {{ form.picture.errors }}
@@ -137,7 +154,7 @@
                 {% endif %}
              </div>
              <div class="large-3 columns">
-               <p><input type="submit" class="small button" value="Submit" style="width:100%"/></p>
+               <input type="submit" class="small button" value="Submit" style="width:100%"/>
              </div>
            </div>
             
@@ -147,48 +164,10 @@
         {% endif %}
     </div>
   </dd>
-  <dd>
-    <a href="#panel1b" id="viewRatingsPanel"><span class="{% if messages %}ui-icon ui-icon-minusthick{% else %}ui-icon ui-icon-plusthick{% endif %}"></span>&nbsp;View Ratings</a>
-    <div id="panel1b" class="content {% if messages %}active{% endif %}">
-    {% if messages %}
-        <div data-alert class="alert-box success radius">
-            {% for message in messages %} 
-              {{ message }} 
-            {% endfor %} 
-            <a href="#" class="close">&times;</a>
-        </div> 
-    {% endif %} 
-{% for rating in rating_list %}
-<div class="row">
-  <div class="large-12 columns">
-    {% if rating.user == request.user %}
-    <div class="panel callout radius">
-    {% endif %}
-    <table style="width:100%">
-      <tbody>
-        <tr>
-          <td style="width:35%"><b>Reviewer:</b> {% if rating.taster.nickName %}{{ rating.taster.nickName }}{% else %}{{ rating.user.username }}{% endif %}</td>
-          <td style="width:20%"><b>Flavor:</b> {{ rating.overallRating }}</td>
-          <td style="width:20%"><b>Volume:</b> {{ rating.volumeRating }}</td>
-          <td style="width:25%"><b>Date:</b> {{ rating.date }}</td>
-        </tr>
-        <tr>
-            {% if rating.picture %}
-                <td colspan="3" style="word-break:break-all">{{ rating.notes }}</td>
-                <td colspan="1"><img src ="{{ rating.picture.url }}"></td>    
-            {% else %}
-                <td colspan="4" style="word-break:break-all">{{ rating.notes }}</td>           
-            {% endif %}
-        </tr>
-      </tbody>
-    </table>   
-    {% if rating.user == request.user %}
-    </div>
-    {% endif %}  
-  </div>
-</div>
-{% endfor %}
-{% paginateNumbers rating_list orderBy=request.GET.order_by defaultOrderBy='-date' %}
+  <dd class="ajaxAnchor">
+    <a href="#beerRatingTable" id="viewRatingsPanel"><span class="{% if messages %}ui-icon ui-icon-minusthick{% else %}ui-icon ui-icon-plusthick{% endif %}"></span>&nbsp;View Ratings</a>
+    <div id="beerRatingTable" class="content {% if messages %}active{% endif %} ajaxLoadDiv">
+        {% include "tracker/beerRatingTable.html" %}
     </div>
   </dd>
 </dl>

@@ -1,10 +1,23 @@
 from django import template
+from decimal import *
 
 register = template.Library()
 
 @register.filter    
 def subtract(value, arg):
     return value - arg
+
+@register.filter    
+def multiply(value, arg):
+    arg1 = Decimal(value)
+    arg2 = Decimal(arg)
+    return arg1 * arg2
+
+@register.filter    
+def divide(value, arg):
+    arg1 = Decimal(value)
+    arg2 = Decimal(arg)
+    return arg1 / arg2
 
 @register.inclusion_tag('tracker/beerTable.html')
 def beerTable(beers, **kwargs):

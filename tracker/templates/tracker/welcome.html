@@ -1,5 +1,6 @@
 {% extends "tracker/base.html" %}
 {% load static %}
+{% load humanize %}
 {% load beer_tags %}
 {% block title %}Welcome!{% endblock %}
 {% block base_body %}
@@ -19,7 +20,7 @@
 <p>Welcome to BeerQuest.  Our goal is to drink beer and be able to remember which ones we liked.  We use a two prong rating system, flavor and volume.  Flavor tracks the overall taste and enjoyment of the beer, a higher value means a more pleasant beer experience.  Volume indicates how much of a beer you could drink.  Some beers may be very tasty, but you may only be able to drink a few of them.  The drunakability of a beer is then calculated based on the volume and the ABV.
 </p>
 <p>
-BeerQuest currently has a database of {{ beerCount }} beers, {{ breweryCount }} breweries, and {{ ratingCount }} ratings.
+BeerQuest currently has a database of {{ beerCount|intcomma }} <a href="/tracker/beers/">beers</a>, {{ breweryCount|intcomma }} <a href="/tracker/breweries/">breweries</a>, and {{ ratingCount|intcomma }} ratings.
 </p>
 			</div>
 		</div>

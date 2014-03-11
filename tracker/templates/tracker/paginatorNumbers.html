@@ -2,21 +2,21 @@
         <div class="pagination-centered">
          <ul class="pagination">
             {% if activePage.has_previous %}
-                <li class="arrow"><a href="?page=1&order_by={{ orderBy }}">&laquo;</a></li>
-                <li class="arrow"><a href="?page={{ activePage.previous_page_number }}&order_by={{ orderBy }}">&lsaquo;</a></li>
+                <li class="arrow"><a href="?page=1&order_by={{ orderBy }}" class='paginatorLink'>&laquo;</a></li>
+                <li class="arrow"><a href="?page={{ activePage.previous_page_number }}&order_by={{ orderBy }}" class='paginatorLink'>&lsaquo;</a></li>
             {% else %}
                 <li class="arrow">&laquo;</li>
                 <li class="arrow">&lsaquo;</li>
             {% endif %}
             {% for pageNumber in activePage.paginator.page_range %}
                 {% if pageNumber >= activePage.number|subtract:3 and pageNumber <= activePage.number|add:3 or activePage.number >= activePage.paginator.num_pages|subtract:3 and pageNumber > activePage.paginator.num_pages|subtract:7 or activePage.number <= 3 and pageNumber <= 7 %}
-            <li {% if pageNumber == activePage.number %}class="current"{% endif %}><a href="?page={{ pageNumber }}&order_by={{ orderBy }}">{{ pageNumber }}</a></li>
+            <li {% if pageNumber == activePage.number %}class="current"{% endif %}><a href="?page={{ pageNumber }}&order_by={{ orderBy }}" class='paginatorLink'>{{ pageNumber }}</a></li>
                 {% endif %}
             {% endfor %}
 <!--           <li class="unavailable"><a href="">&hellip;</a></li> -->
             {% if activePage.has_next %}
-                <li class="arrow"><a href="?page={{ activePage.next_page_number }}&order_by={{ orderBy }}">&rsaquo;</a></li>
-                <li class="arrow"><a href="?page={{ activePage.paginator.num_pages }}&order_by={{ orderBy }}">&raquo;</a></li>
+                <li class="arrow"><a href="?page={{ activePage.next_page_number }}&order_by={{ orderBy }}" class='paginatorLink'>&rsaquo;</a></li>
+                <li class="arrow"><a href="?page={{ activePage.paginator.num_pages }}&order_by={{ orderBy }}" class='paginatorLink'>&raquo;</a></li>
             {% else %}
                 <li class="arrow">&rsaquo;</li>
                 <li class="arrow">&raquo;</li>
