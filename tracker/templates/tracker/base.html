@@ -112,8 +112,15 @@
         $(document).ready(function() {
             $('#searchLink').click(function(event) {
                 event.preventDefault();
-                linkText = $(this).attr('href') + $('#searchText').val() + '/';
+                linkText = $(this).attr('href') + encodeURIComponent($('#searchText').val()) + '/';
                 window.location = linkText;
+            });
+
+            $('#searchText').keyup(function(event) {
+                if (event.keyCode == 13) {
+                    $('#searchLink').trigger('click');
+                    return false;
+                 }
             });
         });
     </script>

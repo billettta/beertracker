@@ -6,7 +6,7 @@
 {% block content %}
 <br/>
 <div class="row">
-  <div class="large-12 columns">
+  <div class="large-12 columns ajaxAnchor">
     {% if messages %}
         <div data-alert class="alert-box warning">
             {% for message in messages %}
@@ -17,14 +17,14 @@
             <a href="#" class="close">&times;</a>
         </div> 
     {% else %} 
-    <dl class="tabs ajaxAnchor" data-tab>
+    <dl class="tabs" data-tab>
       <dd class="active"><a href="#beerPanel">Beers ({{ beers.paginator.count  }})</a></dd>
       <dd><a href="#breweryPanel">Breweries ({{ breweries.paginator.count }})</a></dd>
       <dd><a href="#stylePanel">Styles ({{ styles.paginator.count }})</a></dd>
     </dl>
     <div class="tabs-content">
       <div class="content active ajaxLoadDiv" id="beerPanel">
-        {% include "tracker/beerTable.html" %}
+        {% include "tracker/beerBreweryTable.html" %}
       </div>
       <div class="content ajaxLoadDiv" id="breweryPanel">
         {% include "tracker/breweryTable.html" %}
