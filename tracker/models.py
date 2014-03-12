@@ -75,7 +75,7 @@ class Quote(models.Model):
     date = models.DateField()
 
 
-class Pictures(models.Model):
+class Picture(models.Model):
     picture = models.ImageField(upload_to='shots',blank=True)
     submitter = models.ForeignKey(User)
     date = models.DateField()

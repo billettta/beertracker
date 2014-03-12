@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404, render_to_response, redirect
 from django.http import HttpResponse
-from tracker.models import Beer,Rating,RatingForm,NewUserForm,Brewery,Style,NewTasterForm,Team,Picture,Quotes
+from tracker.models import Beer,Rating,RatingForm,NewUserForm,Brewery,Style,NewTasterForm,Team,Picture,Quote
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.template import RequestContext
