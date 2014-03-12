@@ -9,23 +9,24 @@
           <th style="width:8%"><a href="?order_by={% ifequal request.GET.order_by 'abv' %}-{% endifequal %}abv" class='tableSortLink'>ABV</a></th>
           <th style="width:8%"><a href="?order_by={% ifequal request.GET.order_by 'avg_rating' %}-{% endifequal %}avg_rating" class='tableSortLink'>Overall Rating</a></th>
           <th style="width:8%"><a href="?order_by={% ifequal request.GET.order_by 'avg_volume' %}-{% endifequal %}avg_volume" class='tableSortLink'>Volume Rating</a></th>
-          <th style="width:8%"><a href="?order_by={% ifequal request.GET.order_by 'retired' %}-{% endifequal %}retired" class='tableSortLink'>Retired</a></th>
         </tr>
         </thead>
         <tbody>
         {% for beer in beers %}
         <tr>
-          <td><a href="/tracker/beer/{{ beer.id }}/">{{ beer.name }}</a></td>
+          <td><a href="/tracker/beer/{{ beer.id }}/">{{ beer.name }}{% if beer.retired %}*{% endif %}</a></td>
           <td><a href="/tracker/style/{{ beer.style.id }}">{{ beer.style.name}}</a></td>
           <td>{% if beer.abv %}{{ beer.abv }}{% else %}?{% endif %}</td>
           <td>{{ beer.avg_rating|floatformat:"1" }}</td>
           <td>{{ beer.avg_volume|floatformat:"1" }}</td>
-          <td>{{ beer.retired }}</td>
         </tr>
         {% endfor %}
         </tbody>
         </table>
         {% paginateNumbers beers orderBy=request.GET.order_by defaultOrderBy='name' %}
+        <div data-alert class="alert-box info radius large-6 small-centered columns" style="text-align:center">
+            Note: * denotes beers that are no longer actively brewed.
+        </div>
     </div>
 </div>
 

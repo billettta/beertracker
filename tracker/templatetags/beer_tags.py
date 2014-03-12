@@ -5,19 +5,31 @@ register = template.Library()
 
 @register.filter    
 def subtract(value, arg):
-    return value - arg
+    try:
+        returnVal = value - arg
+    except:
+        returnVal = None
+    return returnVal
 
 @register.filter    
 def multiply(value, arg):
-    arg1 = Decimal(value)
-    arg2 = Decimal(arg)
-    return arg1 * arg2
+    try:
+        arg1 = Decimal(value)
+        arg2 = Decimal(arg)
+        returnVal = arg1 * arg2
+    except:
+        returnVal = None
+    return returnVal
 
 @register.filter    
 def divide(value, arg):
-    arg1 = Decimal(value)
-    arg2 = Decimal(arg)
-    return arg1 / arg2
+    try:
+        arg1 = Decimal(value)
+        arg2 = Decimal(arg)
+        returnVal = arg1 / arg2
+    except:
+        returnVal = None
+    return returnVal
 
 @register.inclusion_tag('tracker/beerTable.html')
 def beerTable(beers, **kwargs):

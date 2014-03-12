@@ -71,7 +71,7 @@ def search(request, searchString):
 
     if request.is_ajax():
         if panelID == 'beerPanel':
-            template = 'tracker/beerTable.html'
+            template = 'tracker/beerBreweryTable.html'
         elif panelID == 'breweryPanel':
             template = 'tracker/breweryTable.html'
         elif panelID == 'stylePanel':
@@ -269,7 +269,7 @@ def beerList(request):
         beers = paginator.page(paginator.num_pages)
 
     if request.is_ajax():
-        template = 'tracker/beerTable.html'
+        template = 'tracker/beerBreweryTable.html'
     else:
         template = 'tracker/beerList.html'
 
