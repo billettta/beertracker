@@ -224,11 +224,6 @@ def styleList(request):
 
     return render(request, template, {'styles':styles }, context_instance=RequestContext(request))
 
-#def beerList(request):
-   # latest_poll_list = Poll.objects.all().order_by('-pub_date')[:5]
-   # context = {'latest_poll_list': latest_poll_list}
-#    return render(request, 'tracker/index.html', context)
-
 def breweryList(request):
     orderByField = request.GET.get('order_by', 'name')
     brewery_list = Brewery.objects.all().annotate(beer_count=Count('beer')).order_by(orderByField)

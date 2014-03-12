@@ -5,7 +5,12 @@ from django.forms import ModelForm
 from django.forms.extras.widgets import SelectDateWidget
 import datetime
 
-# Create your models here.
+#TODO: limit image sizes
+#TODO: uploads to media need to serve from apache or S3(eventually)
+#TODO: rename files on upload to avoid duplicate filenames
+#TODO: calculate ratings andn drunkability on insert instead of on every read
+
+
 class Brewery(models.Model):
     name = models.CharField(max_length=200)
     city = models.CharField(max_length=200)
@@ -15,7 +20,6 @@ class Brewery(models.Model):
     website = models.URLField()
     def __unicode__(self):
         return self.name
-#    flagship = models.ForeignKey(Beer)
 
 class Style(models.Model):
     name = models.CharField(max_length=200)
@@ -31,20 +35,22 @@ class Beer(models.Model):
     description = models.TextField(blank=True)
     style = models.ForeignKey(Style)
     abv = models.DecimalField(max_digits=3,decimal_places=1,null=True)
-    #uploads to MEDIA_ROOT/beershots need to serve from apache or S3(eventually)
-    #need to figure out how to rename to name of beer and put in folder for brewery
     picture = models.ImageField(upload_to='beershots',blank=True)
-    # additional fields: average rating ?
     retired = models.BooleanField(default=False)
     def __unicode__(self):
         return self.name
 
-#do we even need this class ? description is the only one that would be covered in the generic user
+class Team(models.Model):
+    name = models.CharField(max_length=250,blank=True)
+    picture = models.ImageField(upload_to='teamshots',blank=True)
+    description = models.TextField(blank=True)
+
 class Taster(models.Model):
     user = models.OneToOneField(User)
     description = models.TextField(blank=True)
-    nickName = models.CharField(max_length=250,blank=True)
     picture = models.ImageField(upload_to='tastershots',blank=True)
+    team = models.ForeignKey(Team)
+    nickName = models.CharField(max_length=250,blank=True)
     def __unicode__(self):
         return self.nickName
 
@@ -63,15 +69,17 @@ class Rating(models.Model):
     drunkRating = property(_get_drunk)
 
 class Quote(models.Model):
-    authors = models.ManyToManyField(User)
+    authors = models.ManyToManyField(User,related_name="author")
     quoteText = models.TextField()
-    #should be taken from logged in user
-    submiter = models.ForeignKey(Taster)
+    submiter = models.ForeignKey(User,related_name="submiter")
+    date = forms.DateTimeField(input_formats=['%m/%d/%Y'],initial=datetime.date.today().strftime("%d/%m/%Y"))
 
-class Team(models.Model):
-    members = models.ManyToManyField(User)
-    name = models.CharField(max_length=250,blank=True)
-    description = models.TextField(blank=True)
+
+class Pictures(models.Model):
+    picture = models.ImageField(upload_to='shots',blank=True)
+    submiter = models.ForeignKey(User)
+    date = forms.DateTimeField(input_formats=['%m/%d/%Y'],initial=datetime.date.today().strftime("%d/%m/%Y"))
+    caption = models.CharField(max_length=250,blank=True)
 
 class RatingForm(ModelForm):
     date = forms.DateTimeField(input_formats=['%m/%d/%Y'],initial=datetime.date.today().strftime("%d/%m/%Y"))
@@ -102,4 +110,3 @@ class NewTasterForm(ModelForm):
         model = Taster
         fields = ['nickName', 'description', 'picture']
         
-#additional objects: team ?
