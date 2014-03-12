@@ -49,7 +49,7 @@ class Taster(models.Model):
     user = models.OneToOneField(User)
     description = models.TextField(blank=True)
     picture = models.ImageField(upload_to='tastershots',blank=True)
-    team = models.ForeignKey(Team)
+    team = models.ForeignKey(Team,blank=True)
     nickName = models.CharField(max_length=250,blank=True)
     def __unicode__(self):
         return self.nickName
@@ -71,14 +71,14 @@ class Rating(models.Model):
 class Quote(models.Model):
     authors = models.ManyToManyField(User,related_name="author")
     quoteText = models.TextField()
-    submiter = models.ForeignKey(User,related_name="submiter")
-    date = forms.DateTimeField(input_formats=['%m/%d/%Y'],initial=datetime.date.today().strftime("%d/%m/%Y"))
+    submitter = models.ForeignKey(User,related_name="submitter")
+    date = models.DateField()
 
 
 class Pictures(models.Model):
     picture = models.ImageField(upload_to='shots',blank=True)
-    submiter = models.ForeignKey(User)
-    date = forms.DateTimeField(input_formats=['%m/%d/%Y'],initial=datetime.date.today().strftime("%d/%m/%Y"))
+    submitter = models.ForeignKey(User)
+    date = models.DateField()
     caption = models.CharField(max_length=250,blank=True)
 
 class RatingForm(ModelForm):

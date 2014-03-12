@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404, render_to_response, redirect
 from django.http import HttpResponse
-from tracker.models import Beer,Rating,RatingForm,NewUserForm,Brewery,Style,NewTasterForm
+from tracker.models import Beer,Rating,RatingForm,NewUserForm,Brewery,Style,NewTasterForm,Team,Picture,Quotes
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.template import RequestContext
@@ -176,6 +176,12 @@ def styleDetail(request, style_id):
 @login_required(login_url='/tracker/login/')
 def myProfile(request):
     return redirect(profile, request.user.id )
+
+def teamDetail(request, team_id):
+    team = None
+    team = get_object_or_404(Team,pk=team_id)
+    #quotes = Quotes.objects.filter(submiter 
+    return None
 
 def profile(request, user_id):
     user = None
