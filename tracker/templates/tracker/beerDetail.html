@@ -59,7 +59,7 @@
 			  Volume Rating: {{ beer.avg_volume|floatformat:"1" }}
 			</div>
 			<div class="large-4 columns end">
-			  Drunk Rating: {{ beer.avg_volume|multiply:beer.abv|divide:10|floatformat:"1" }}
+			  Drunk Rating: {{ beer.avg_drunk|floatformat:"1" }}
 			</div>
 		</div>
 		<div class="row">

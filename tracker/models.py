@@ -59,14 +59,10 @@ class Rating(models.Model):
     user = models.ForeignKey(User)
     date = models.DateField()
     overallRating = models.DecimalField(max_digits=3,decimal_places=1)
-    volumeRating = models.DecimalField(max_digits=3,decimal_places=1,blank=True)
+    volumeRating = models.DecimalField(max_digits=3,decimal_places=1,null=True)
+    drunkRating = models.DecimalField(max_digits=3,decimal_places=1,null=True)
     notes = models.TextField(blank=True)
     picture = models.ImageField(upload_to='ratingshots',blank=True)
-    # right now this is calculated when called instead of stored in DB probably want to switch so its only calculated once
-    def _get_drunk(self):
-        "Returns the drunkability"
-        return (self.beer.abv * self.volumeRating)/10
-    drunkRating = property(_get_drunk)
 
 class Quote(models.Model):
     authors = models.ManyToManyField(User,related_name="author")

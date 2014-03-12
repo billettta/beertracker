@@ -31,7 +31,7 @@ def search(request, searchString):
     styles = None
     
     if panelID == 'beerPanel' or panelID == 'all':
-        beer_list = Beer.objects.filter(name__icontains=searchString).annotate(avg_rating=Avg('rating__overallRating'), avg_volume=Avg('rating__volumeRating')).order_by(orderByField)
+        beer_list = Beer.objects.filter(name__icontains=searchString).annotate(avg_rating=Avg('rating__overallRating'), avg_volume=Avg('rating__volumeRating'), avg_drunk=Avg('rating__drunkRating')).order_by(orderByField)
         paginator = Paginator(beer_list, 20) #Show 20 beers per page
         page = request.GET.get('page')
         try:
@@ -90,19 +90,22 @@ def beerDetail(request, beer_id):
     else:
         template = 'tracker/beerDetail.html'
         beer = get_object_or_404(Beer, pk=beer_id)
+        form = RatingForm()
         if request.method == 'POST':
             rf = RatingForm(request.POST, request.FILES)
             if rf.is_valid():
                 ratingForm = rf.save(commit=False)
                 ratingForm.user = request.user
                 ratingForm.beer = beer
+                if ratingForm.volumeRating and beer.abv:
+                    ratingForm.drunkRating = round((ratingForm.volumeRating * beer.abv) / 10,1)
                 ratingForm.save()
                 messages.success(request, 'Rating submitted successfully!')
             else:
                 form = rf
         
-        beer = get_object_or_404(Beer.objects.all().annotate(avg_rating=Avg('rating__overallRating'), avg_volume=Avg('rating__volumeRating')), pk=beer_id)
-        form = RatingForm()
+        beer = get_object_or_404(Beer.objects.all().annotate(avg_rating=Avg('rating__overallRating'), avg_volume=Avg('rating__volumeRating'), avg_drunk=Avg('rating__drunkRating')), pk=beer_id)
+        
     
     orderByField = request.GET.get('order_by', '-date')
     if request.user.is_authenticated():
@@ -128,7 +131,7 @@ def beerDetail(request, beer_id):
 def breweryDetail(request, brewery_id):
     brewery = get_object_or_404(Brewery, pk=brewery_id)
     orderByField = request.GET.get('order_by', 'name')
-    beer_list = Beer.objects.filter(brewery=brewery_id).annotate(avg_rating=Avg('rating__overallRating'), avg_volume=Avg('rating__volumeRating')).order_by(orderByField)
+    beer_list = Beer.objects.filter(brewery=brewery_id).annotate(avg_rating=Avg('rating__overallRating'), avg_volume=Avg('rating__volumeRating'), avg_drunk=Avg('rating__drunkRating')).order_by(orderByField)
     paginator = Paginator(beer_list, 20) #Show 20 beers per page
     page = request.GET.get('page')
     try:
@@ -154,13 +157,13 @@ def ratingDetail(request, rating_id):
 def styleDetail(request, style_id):
     style = None
     if request.is_ajax():
-        template = 'tracker/beerTable.html'
+        template = 'tracker/beerBreweryTable.html'
     else:
         template = 'tracker/styleDetail.html'
         style = get_object_or_404(Style, pk=style_id)
 
     orderByField = request.GET.get('order_by', 'name')
-    beer_list = Beer.objects.filter(style=style_id).annotate(avg_rating=Avg('rating__overallRating'), avg_volume=Avg('rating__volumeRating')).order_by(orderByField)
+    beer_list = Beer.objects.filter(style=style_id).annotate(avg_rating=Avg('rating__overallRating'), avg_volume=Avg('rating__volumeRating'), avg_drunk=Avg('rating__drunkRating')).order_by(orderByField)
     paginator = Paginator(beer_list, 20) #Show 20 beers per page
     page = request.GET.get('page')
     try:
@@ -256,7 +259,7 @@ def ratingList(request):
 
 def beerList(request):
     orderByField = request.GET.get('order_by', 'name')
-    beer_list = Beer.objects.all().annotate(avg_rating=Avg('rating__overallRating'), avg_volume=Avg('rating__volumeRating')).order_by(orderByField)
+    beer_list = Beer.objects.all().annotate(avg_rating=Avg('rating__overallRating'), avg_volume=Avg('rating__volumeRating'), avg_drunk=Avg('rating__drunkRating')).order_by(orderByField)
     paginator = Paginator(beer_list, 20) #Show 20 beers per page
     page = request.GET.get('page')
     try:

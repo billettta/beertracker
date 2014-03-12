@@ -4,11 +4,12 @@
         <table style="width:100%;table-layout:fixed;">
         <thead>
         <tr>
-          <th style="width:34%"><a href="?order_by={% if request.GET.order_by %}{% ifequal request.GET.order_by 'name' %}-{% endifequal %}{% else %}-{% endif %}name" class='tableSortLink'>Beer</a></th>
-          <th style="width:33%"><a href="?order_by={% ifequal request.GET.order_by 'style__name' %}-{% endifequal %}style__name" class='tableSortLink'>Style</a></th>
+          <th style="width:31%"><a href="?order_by={% if request.GET.order_by %}{% ifequal request.GET.order_by 'name' %}-{% endifequal %}{% else %}-{% endif %}name" class='tableSortLink'>Beer</a></th>
+          <th style="width:31%"><a href="?order_by={% ifequal request.GET.order_by 'style__name' %}-{% endifequal %}style__name" class='tableSortLink'>Style</a></th>
           <th style="width:8%"><a href="?order_by={% ifequal request.GET.order_by 'abv' %}-{% endifequal %}abv" class='tableSortLink'>ABV</a></th>
-          <th style="width:8%"><a href="?order_by={% ifequal request.GET.order_by 'avg_rating' %}-{% endifequal %}avg_rating" class='tableSortLink'>Overall Rating</a></th>
-          <th style="width:8%"><a href="?order_by={% ifequal request.GET.order_by 'avg_volume' %}-{% endifequal %}avg_volume" class='tableSortLink'>Volume Rating</a></th>
+          <th style="width:7%"><a href="?order_by={% ifequal request.GET.order_by 'avg_rating' %}-{% endifequal %}avg_rating" class='tableSortLink'>Overall Rating</a></th>
+          <th style="width:7%"><a href="?order_by={% ifequal request.GET.order_by 'avg_volume' %}-{% endifequal %}avg_volume" class='tableSortLink'>Volume Rating</a></th>
+          <th style="width:7%"><a href="?order_by={% ifequal request.GET.order_by 'avg_drunk' %}-{% endifequal %}avg_drunk" class='tableSortLink'>Drunk Rating</a></th>
         </tr>
         </thead>
         <tbody>
@@ -19,6 +20,7 @@
           <td>{% if beer.abv %}{{ beer.abv }}{% else %}?{% endif %}</td>
           <td>{{ beer.avg_rating|floatformat:"1" }}</td>
           <td>{{ beer.avg_volume|floatformat:"1" }}</td>
+          <td>{{ beer.avg_drunk|floatformat:"1" }}</td>
         </tr>
         {% endfor %}
         </tbody>
