@@ -5,32 +5,35 @@
 {% block content %}
 <br/>
 <div class="row">
-    <div class="large-12 columns">
+    <div class="small-6 large-12 columns">
         <div class="panel">
             {% if form.errors %}
-            <p>Your username and password didn't match. Please try again.</p>
+            <div data-alert class="alert-box warning large-6 small-centered columns">
+                Your username and password didn't match. Please try again.
+                <a href="#" class="close">&times;</a>
+            </div>
             {% endif %}
 
             <form method="post" action="{% url 'django.contrib.auth.views.login' %}">
             {% csrf_token %}
             <div class="row">
-                <div class="small-6 small-centered columns">
+                <div class="large-6 small-centered columns">
                     {{ form.username.label_tag }}{{ form.username }}
                 </div>
             </div>
             <div class="row">
-                <div class="small-6 small-centered columns">
+                <div class="large-6 small-centered columns">
                     {{ form.password.label_tag }}{{ form.password }}
                 </div>
             </div>
             <div class="row">
-                <div class="small-6 small-centered columns">
+                <div class="large-6 small-centered columns">
                     <input type="submit" class="small button" value="Login" style="width:100%"/>
                 </div>
             </div>
             <input type="hidden" name="next" value="{{ next }}"/>
             </form>
-            <div class="small-6 small-centered columns" style="text-align:center">
+            <div class="large-6 small-centered columns" style="text-align:center">
                     <a href="/tracker/register/" >Register</a>
                 </div>
             </div>
