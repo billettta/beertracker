@@ -76,7 +76,7 @@ class Picture(Event):
     picture = models.ImageField(upload_to='shots',blank=True)
     caption = models.CharField(max_length=250,blank=True)
 
-class TeamForm(ModelForm)
+class TeamForm(ModelForm):
     class Meta:
         model = Team
         fields = ['name','picture','description']
