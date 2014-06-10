@@ -49,33 +49,37 @@ class Taster(models.Model):
     user = models.OneToOneField(User)
     description = models.TextField(blank=True)
     picture = models.ImageField(upload_to='tastershots',blank=True)
-    team = models.ForeignKey(Team,blank=True)
+    team = models.ForeignKey(Team,blank=True,null=True)
     nickName = models.CharField(max_length=250,blank=True)
     def __unicode__(self):
         return self.nickName
 
-class Rating(models.Model):
-    beer = models.ForeignKey(Beer)
+class Event(models.Model):
     user = models.ForeignKey(User)
     date = models.DateField()
+    team = models.ForeignKey(Team,blank=True,null=True)
+
+class Rating(Event):
+    beer = models.ForeignKey(Beer)
     overallRating = models.DecimalField(max_digits=3,decimal_places=1)
     volumeRating = models.DecimalField(max_digits=3,decimal_places=1,null=True)
     drunkRating = models.DecimalField(max_digits=3,decimal_places=1,null=True)
     notes = models.TextField(blank=True)
     picture = models.ImageField(upload_to='ratingshots',blank=True)
 
-class Quote(models.Model):
+class Quote(Event):
     authors = models.ManyToManyField(User,related_name="author")
     quoteText = models.TextField()
-    submitter = models.ForeignKey(User,related_name="submitter")
-    date = models.DateField()
 
 
-class Picture(models.Model):
+class Picture(Event):
     picture = models.ImageField(upload_to='shots',blank=True)
-    submitter = models.ForeignKey(User)
-    date = models.DateField()
     caption = models.CharField(max_length=250,blank=True)
+
+class TeamForm(ModelForm)
+    class Meta:
+        model = Team
+        fields = ['name','picture','description']
 
 class RatingForm(ModelForm):
     date = forms.DateTimeField(input_formats=['%m/%d/%Y'],initial=datetime.date.today().strftime("%d/%m/%Y"))
