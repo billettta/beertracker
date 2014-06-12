@@ -11,7 +11,11 @@
       <h3>{{ brewery.name }}<small> - {{ brewery.city }}{% if brewery.state %}, {{ brewery.state }} {% elif brewery.country %}, {{ brewery.country }}{% endif %}</small><a href="/admin/tracker/brewery/{{ brewery.id }}/" class="button tiny right">Edit</a></h3>
       <div class="row">
         <div class="large-2 columns">
-          <img src="http://placehold.it/200x300&Text=Image">
+              {% if brewery.picture %}
+                <img src="{{ brewery.picture.url }}">
+              {% else %}
+                <img src="http://placehold.it/200x300&Text=Image">
+              {% endif %}
         </div>
 	<div class="large-10 columns end">
 		<div class="row">
