@@ -18,6 +18,7 @@ class Brewery(models.Model):
     country = models.CharField(max_length=200)
     description = models.TextField(blank=True)
     website = models.URLField()
+    picture = models.ImageField(upload_to='breweryshots',blank=True)
     def __unicode__(self):
         return self.name
 
@@ -26,6 +27,7 @@ class Style(models.Model):
     description = models.TextField(blank=True)
     lowabv = models.DecimalField(max_digits=3,decimal_places=1,null=True)
     highabv = models.DecimalField(max_digits=3,decimal_places=1,null=True)
+    picture = models.ImageField(upload_to='styleshots',blank=True)
     def __unicode__(self):
         return self.name
 
